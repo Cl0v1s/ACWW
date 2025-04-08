@@ -137,7 +137,7 @@ class Letter {
         }
 
         std::string GetReceiverTownName() {
-            return std::string(saveData + startOffset + regionalData->TOWNNAME_RECEIVER, regionalData->TOWNNAME_LENGTH);
+            return decode(std::string(saveData + startOffset + regionalData->TOWNNAME_RECEIVER, regionalData->TOWNNAME_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
         }
 
         uint16_t GetReceiverPlayerId() {
@@ -145,7 +145,7 @@ class Letter {
         }
 
         std::string GetReceiverPlayerName() {
-            return std::string(saveData + startOffset + regionalData->PLAYERNAME_RECEIVER, regionalData->PLAYERNAME_LENGTH);
+            return decode(std::string(saveData + startOffset + regionalData->PLAYERNAME_RECEIVER, regionalData->PLAYERNAME_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
         }
 
         uint16_t GetSenderTownId() {
@@ -153,7 +153,7 @@ class Letter {
         }
         
         std::string GetSenderTownName() {
-            return std::string(saveData + startOffset + regionalData->TOWNNAME_SENDER, regionalData->TOWNNAME_LENGTH);
+            return decode(std::string(saveData + startOffset + regionalData->TOWNNAME_SENDER, regionalData->TOWNNAME_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
         }
         
         uint16_t GetSenderPlayerId() {
@@ -165,7 +165,7 @@ class Letter {
         }
         
         std::string GetIntroPart() {
-            return std::string(saveData + startOffset + regionalData->INTRO_PART, regionalData->INTRO_LENGTH);
+            return decode(std::string(saveData + startOffset + regionalData->INTRO_PART, regionalData->INTRO_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);;
         }
 
         void SetIntroPart(const std::string& intro) {
@@ -185,7 +185,7 @@ class Letter {
         }
 
         std::string GetEndPart() {
-            return std::string(saveData + startOffset + regionalData->END_PART, regionalData->END_LENGTH);
+            return decode(std::string(saveData + startOffset + regionalData->END_PART, regionalData->END_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
         }
 
         void SetEndPart(const std::string& end) {

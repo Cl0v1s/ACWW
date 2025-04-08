@@ -13,13 +13,12 @@ TEST_CASE("Chars are decoded", "[translator]" ) {
 TEST_CASE("Chars are encoded", "[translator]" ) {
     const char ctest1[] = { 0x1b, 0x1c, 0x1d };
     std::string test1("abc");
-    std::string result = encode(test1, false, false);
-    CAPTURE(test1, result);
+    const char* result = encode(test1, false, false).c_str();
     REQUIRE(
         strcmp(
-            encode(test1, false, false).c_str(),
+            result,
             ctest1
-        ) == true
+        ) == 0
     );
 }
 

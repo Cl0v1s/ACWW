@@ -4,6 +4,8 @@
 #include <string>
 #include <wchar.h>
 
+#include "../vendor/catch.hpp"
+
 const wchar_t wwCharacterDictionary[] = {
     L'\0', L'A', L'B', L'C', L'D', L'E', L'F', L'G', L'H', L'I', L'J', L'K', L'L', L'M', L'N', L'O',
     L'P', L'Q', L'R', L'S', L'T', L'U', L'V', L'W', L'X', L'Y', L'Z', L'a', L'b', L'c', L'd', L'e',
