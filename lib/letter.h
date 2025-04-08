@@ -133,7 +133,7 @@ class Letter {
         }
 
         uint16_t GetReceiverTownId() {
-            return saveData[startOffset + regionalData->TOWNID_RECEIVER] << 8 + saveData[startOffset + regionalData->TOWNID_RECEIVER + 1];
+            return (saveData[startOffset + regionalData->TOWNID_RECEIVER] << 8) + (saveData[startOffset + regionalData->TOWNID_RECEIVER + 1] & 0xFF);
         }
 
         std::string GetReceiverTownName() {
@@ -141,7 +141,7 @@ class Letter {
         }
 
         uint16_t GetReceiverPlayerId() {
-            return saveData[startOffset + regionalData->PLAYERID_RECEIVER] << 8 + saveData[startOffset + regionalData->PLAYERID_RECEIVER + 1];
+            return (saveData[startOffset + regionalData->PLAYERID_RECEIVER] << 8) + (saveData[startOffset + regionalData->PLAYERID_RECEIVER + 1] & 0xFF);
         }
 
         std::string GetReceiverPlayerName() {
@@ -149,7 +149,7 @@ class Letter {
         }
 
         uint16_t GetSenderTownId() {
-            return saveData[startOffset + regionalData->TOWNID_SENDER] << 8 + saveData[startOffset + regionalData->TOWNID_SENDER + 1];
+            return (saveData[startOffset + regionalData->TOWNID_SENDER] << 8) + (saveData[startOffset + regionalData->TOWNID_SENDER + 1] & 0xFF);
         }
         
         std::string GetSenderTownName() {
@@ -157,7 +157,7 @@ class Letter {
         }
         
         uint16_t GetSenderPlayerId() {
-            return saveData[startOffset + regionalData->PLAYERID_SENDER] << 8 + saveData[startOffset + regionalData->PLAYERID_SENDER + 1];
+            return (saveData[startOffset + regionalData->PLAYERID_SENDER] << 8) + (saveData[startOffset + regionalData->PLAYERID_SENDER + 1] & 0xFF);
         }
         
         std::string GetSenderPlayerName() {
@@ -207,7 +207,7 @@ class Letter {
         }
 
         uint16_t GetAttachementId() {
-            return saveData[startOffset + regionalData->ATTACHMENT_ITEM] << 8 + saveData[startOffset + regionalData->ATTACHMENT_ITEM + 1];
+            return (saveData[startOffset + regionalData->ATTACHMENT_ITEM] << 8) + (saveData[startOffset + regionalData->ATTACHMENT_ITEM + 1] & 0xFF);
         }
 
         void SetAttachementId(uint16_t id) {
