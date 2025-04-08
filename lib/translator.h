@@ -42,12 +42,32 @@ const wchar_t wwCharacterDictionaryJapanese[] = {
     L'>', L'\'', L'\"', L'_', L'+', L'=', L'&', L'@', L':', L';', L'×', L'÷', L'☔', L'★', L'♥', L'♪'
 };
 
-unsigned char decodeChar(unsigned char input, bool jpn) {
+wchar_t decodeChar(unsigned char input, bool jpn) {
     return jpn ? wwCharacterDictionaryJapanese[input] : wwCharacterDictionary[input];
 }
 
+unsigned char encodeChar(wchar_t input, bool jpn) {
+    const wchar_t* table = wwCharacterDictionary;
+    size_t size = sizeof(wwCharacterDictionary);
+    if(jpn) {
+        table = wwCharacterDictionaryJapanese;
+        size = sizeof(wwCharacterDictionaryJapanese);
+    }
+    int index = -1;
+    size_t length = size / sizeof(table[0]);
+    int i = 0;
+    while(index == -1 && i < length) { // we can probably optimize that by creating reversed array 
+        if(table[i] == input) {
+            index = i;
+        }
+        i += 1;
+    }
+    if(index == -1) return jpn ? 232 : 156; // ?
+    return index;
+}
 
-std::string decode(std::string input, bool jpn, bool kor) {
+
+std::string decode(const std::string& input, bool jpn, bool kor) {
     if(kor) {
         printf("We do not support korea for now.\n");
         exit(1);
@@ -57,6 +77,20 @@ std::string decode(std::string input, bool jpn, bool kor) {
     const char* cinput = input.c_str();
     for(int i = 0; i < input.length(); i++) {
         output[i] = decodeChar(cinput[i], jpn);
+    }
+    return output;
+}
+
+std::string encode(const std::string& input, bool jpn, bool kor) {
+    if(kor) {
+        printf("We do not support korea for now.\n");
+        exit(1);
+    }
+
+    std::string output = std::string(input);
+    const char* cinput = input.c_str();
+    for(int i = 0; i < input.length(); i++) {
+        output[i] = encodeChar(cinput[i], jpn);
     }
     return output;
 }

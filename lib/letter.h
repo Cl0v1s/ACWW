@@ -168,8 +168,9 @@ class Letter {
             return std::string(saveData + startOffset + regionalData->INTRO_PART, regionalData->INTRO_LENGTH);
         }
 
-        void SetIntroPart(std::string intro) {
-            const char* cintro = intro.c_str();
+        void SetIntroPart(const std::string& intro) {
+            std::string encodedIntro = encode(intro, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+            const char* cintro = encodedIntro.c_str();
             strncpy(saveData + startOffset + regionalData->INTRO_PART, cintro, regionalData->INTRO_LENGTH);
         }
 
@@ -177,8 +178,9 @@ class Letter {
             return decode(std::string(saveData + startOffset + regionalData->BODY_PART, regionalData->BODY_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
         }
 
-        void SetBodyPart(std::string body) {
-            const char* cbody = body.c_str();
+        void SetBodyPart(const std::string& body) {
+            std::string encodedBody = encode(body, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+            const char* cbody = encodedBody.c_str();
             strncpy(saveData + startOffset + regionalData->BODY_PART, cbody, regionalData->BODY_LENGTH);
         }
 
@@ -186,8 +188,9 @@ class Letter {
             return std::string(saveData + startOffset + regionalData->END_PART, regionalData->END_LENGTH);
         }
 
-        void SetEndPart(std::string end) {
-            const char* cend = end.c_str();
+        void SetEndPart(const std::string& end) {
+            std::string encodedEnd = encode(end, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+            const char* cend = encodedEnd.c_str();
             strncpy(saveData + startOffset + regionalData->END_PART, cend, regionalData->END_LENGTH);
         }
 
