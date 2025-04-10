@@ -14,7 +14,7 @@ class LetterFactory {
          * Get a random paper for the answer
          */
         unsigned char GetPaper() {
-            return 0x36;
+            return 0x37;
         }
 
         /**
@@ -30,7 +30,7 @@ class LetterFactory {
          * Generate attachement from player's letter
          */
         uint16_t GetAttachement(const Letter &letter) {
-            return 0xF1FF;
+            return 0x0000;
         }
 
     public:
@@ -45,8 +45,8 @@ class LetterFactory {
             answer.SetReceiverTownId(letter.GetSenderTownId());
             answer.SetReceiverTownName(letter.GetSenderTownName());
 
-            answer.SetSenderPlayerId(letter.GetReceiverPlayerId());
-            answer.SetSenderPlayerName(letter.GetReceiverPlayerName());
+            answer.SetSenderPlayerId(0x2D);
+            answer.SetSenderPlayerName(std::string("Nonos"));
             answer.SetSenderTownId(letter.GetReceiverTownId());
             answer.SetSenderTownName(letter.GetReceiverTownName());
 
@@ -54,8 +54,8 @@ class LetterFactory {
 
             answer.SetAttachementId(this->GetAttachement(letter));
             answer.setPaperId(this->GetPaper());
-            answer.SetFlags(FLAG_UNREAD);
-            answer.SetIntroIndex(0x0C);
+            answer.SetFlags(FLAG_CREATED);
+            answer.SetIntroIndex(0);
 
             printf("Answer:\n");
             print(answer);

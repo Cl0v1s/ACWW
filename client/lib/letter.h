@@ -39,8 +39,7 @@ typedef struct {
 
     uint8_t INTRO_INDEX;
     uint8_t PAPER_ID;
-    uint8_t FLAGS_1;
-    uint8_t FLAGS_2;
+    uint8_t FLAGS;
     uint16_t ATTACHMENT_ITEM;
 } LetterStruct;
 
@@ -68,8 +67,7 @@ LetterStruct LETTER_EUR_USA = {
 
     .INTRO_INDEX = 0xEC,
     .PAPER_ID = 0xED,
-    .FLAGS_1 = 0x1A,
-    .FLAGS_2 = 0xEE,
+    .FLAGS = 0xEE,
     .ATTACHMENT_ITEM = 0xF0
 };
 
@@ -97,8 +95,7 @@ LetterStruct LETTER_JPN = {
 
     .INTRO_INDEX = 0x86,
     .PAPER_ID = 0x87,
-    .FLAGS_1 = 0x16,
-    .FLAGS_2 = 0x88,
+    .FLAGS = 0x88,
     .ATTACHMENT_ITEM = 0x8A
 };
 
@@ -126,8 +123,7 @@ LetterStruct LETTER_KOR = {
 
     .INTRO_INDEX = 0xF8,
     .PAPER_ID = 0xF9,
-    .FLAGS_1 = 0x22,
-    .FLAGS_2 = 0xFA,
+    .FLAGS = 0xFA,
     .ATTACHMENT_ITEM = 0xFC
 };
 
@@ -258,11 +254,10 @@ class Letter {
         }
 
         uint8_t GetFlags() {
-            return saveData[startOffset + regionalData->FLAGS_2];
+            return saveData[startOffset + regionalData->FLAGS];
         }
         void SetFlags(uint8_t value) {
-            saveData[startOffset + regionalData->FLAGS_1] = value;
-            saveData[startOffset + regionalData->FLAGS_2] = value;
+            saveData[startOffset + regionalData->FLAGS] = value;
         }
 
         uint16_t GetAttachementId() {

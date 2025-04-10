@@ -20,8 +20,6 @@ bool readSave(const char* filename, char** content) {
     if ((*content) == NULL) {
         return false;
     }   
-    printf("%d\n", info.st_size);
-
     FILE *fp = fopen(filename, "rb");
     if (fp == NULL) {
         return false;

@@ -7,7 +7,7 @@
 #define POST_BOX 0x1463C // May only be true for EUR_USA regions 
 #define POST_BOX_LENGTH 10
 
-#define MAIL_BOX 0x1200D // May only be true for EUR_USA regions
+#define MAIL_BOX 0x1200C // May only be true for EUR_USA regions
 #define MAIL_BOX_LENGTH 10 
 
 LetterFactory factory;
