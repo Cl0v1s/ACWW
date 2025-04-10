@@ -58,8 +58,6 @@ class LetterFactory {
             answer.SetIntroFlag(INSERT_NAME_INTRO);
             answer.SetNameFlag(INSERT_NAME_INVENTORY);
 
-            printf("Answer:\n");
-            print(answer);
             return answer;
         }
 };

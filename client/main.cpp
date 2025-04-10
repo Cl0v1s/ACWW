@@ -12,13 +12,14 @@ int main() {
         printf("Unable to load save file\n");
     }
     printf("Loading letters\n");
-    Letter* letters = (Letter*)malloc(POST_BOX_LENGTH * sizeof(Letter));
-    int letterLength = gatherLetter(saveData, letters, &LETTER_EUR_USA);
+    LetterMemory* region = &LETTER_MEMORY_EUR_USA;
+    Letter* letters = (Letter*)malloc(region->POST_BOX_LENGTH * sizeof(Letter));
+    int letterLength = gatherLetter(saveData, letters, region);
     printf("Loaded %d letters\n", letterLength);
     for(int i = 0; i < letterLength; i++) {
         print(letters[i]);
     }
-    deliverLetters(saveData, letters, letterLength, &LETTER_EUR_USA);
+    deliverLetters(saveData, letters, letterLength, region);
     checksum(saveData);
     if(!writeSave("misc/save.sav", saveData)) {
         printf("Unable to write save file\n");
