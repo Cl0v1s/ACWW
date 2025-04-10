@@ -15,6 +15,12 @@
 #define FLAG_CREATED_BOTTLE 0x5
 #define FLAG_FROM_MOTHER 0x6
 
+#define NO_ATTACHEMENT 0xF1FF
+
+#define INSERT_NAME_INTRO 0x02
+
+#define INSERT_NAME_INVENTORY 0x03
+
 typedef struct {
     uint16_t LETTER_SIZE;
     uint8_t TOWNNAME_LENGTH;
@@ -25,10 +31,14 @@ typedef struct {
     uint16_t PLAYERID_RECEIVER;
     uint16_t PLAYERNAME_RECEIVER;
 
-    uint16_t TOWNID_SENDER;
+    uint16_t INTRO_FLAG;
+
+    uint16_t TOWNID_SENDER;    
     uint16_t TOWNNAME_SENDER;
     uint16_t PLAYERID_SENDER;
     uint16_t PLAYERNAME_SENDER;
+
+    uint16_t NAME_FLAG;
 
     uint16_t INTRO_PART;
     uint8_t INTRO_LENGTH;
@@ -53,10 +63,14 @@ LetterStruct LETTER_EUR_USA = {
     .PLAYERID_RECEIVER = 0xE,
     .PLAYERNAME_RECEIVER = 0x10,
 
+    .INTRO_FLAG = 0x1A,
+
     .TOWNID_SENDER = 0x1C,
     .TOWNNAME_SENDER = 0x1E,
     .PLAYERID_SENDER = 0x26,
     .PLAYERNAME_SENDER = 0x28,
+
+    .NAME_FLAG = 0x32,
 
     .INTRO_PART = 0x34,
     .INTRO_LENGTH = 24,
@@ -81,10 +95,14 @@ LetterStruct LETTER_JPN = {
     .PLAYERID_RECEIVER = 0xC,
     .PLAYERNAME_RECEIVER = 0xE,
 
+    .INTRO_FLAG = 0x16,
+
     .TOWNID_SENDER = 0x18,
     .TOWNNAME_SENDER = 0x1A,
     .PLAYERID_SENDER = 0x20,
     .PLAYERNAME_SENDER = 0x22,
+
+    .NAME_FLAG = 0x2A,
 
     .INTRO_PART = 0x2C,
     .INTRO_LENGTH = 10,
@@ -109,10 +127,14 @@ LetterStruct LETTER_KOR = {
     .PLAYERID_RECEIVER = 0x12,
     .PLAYERNAME_RECEIVER = 0x14,
 
+    .INTRO_FLAG = 0x22,
+
     .TOWNID_SENDER = 0x24,
     .TOWNNAME_SENDER = 0x26,
     .PLAYERID_SENDER = 0x32,
     .PLAYERNAME_SENDER = 0x34,
+
+    .NAME_FLAG = 0x42,
 
     .INTRO_PART = 0x44,
     .INTRO_LENGTH = 10,
@@ -215,6 +237,7 @@ class Letter {
         void SetIntroPart(const std::string& intro) {
             std::string encodedIntro = encode(intro, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
             const char* cintro = encodedIntro.c_str();
+            this->SetIntroIndex(strlen(cintro));
             strncpy(saveData + startOffset + regionalData->INTRO_PART, cintro, regionalData->INTRO_LENGTH);
         }
 
@@ -245,6 +268,19 @@ class Letter {
             saveData[startOffset + regionalData->INTRO_INDEX] = value;
         }
 
+        uint8_t GetIntroFlag() {
+            return saveData[startOffset + regionalData->INTRO_FLAG];
+        }
+        void SetIntroFlag(uint8_t value) {
+            saveData[startOffset + regionalData->INTRO_FLAG] = value;
+        }
+
+        uint8_t GetNameFlag() {
+            return saveData[startOffset + regionalData->NAME_FLAG];
+        }
+        void SetNameFlag(uint8_t value) {
+            saveData[startOffset + regionalData->NAME_FLAG] = value;
+        }
 
         uint8_t GetPaperId() {
             return saveData[startOffset + regionalData->PAPER_ID];

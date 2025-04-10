@@ -30,7 +30,7 @@ class LetterFactory {
          * Generate attachement from player's letter
          */
         uint16_t GetAttachement(const Letter &letter) {
-            return 0x0000;
+            return NO_ATTACHEMENT;
         }
 
     public:
@@ -46,7 +46,7 @@ class LetterFactory {
             answer.SetReceiverTownName(letter.GetSenderTownName());
 
             answer.SetSenderPlayerId(0x2D);
-            answer.SetSenderPlayerName(std::string("Nonos"));
+            answer.SetSenderPlayerName(letter.GetReceiverPlayerName());
             answer.SetSenderTownId(letter.GetReceiverTownId());
             answer.SetSenderTownName(letter.GetReceiverTownName());
 
@@ -54,8 +54,9 @@ class LetterFactory {
 
             answer.SetAttachementId(this->GetAttachement(letter));
             answer.setPaperId(this->GetPaper());
-            answer.SetFlags(FLAG_CREATED);
-            answer.SetIntroIndex(0);
+            answer.SetFlags(FLAG_UNREAD);
+            answer.SetIntroFlag(INSERT_NAME_INTRO);
+            answer.SetNameFlag(INSERT_NAME_INVENTORY);
 
             printf("Answer:\n");
             print(answer);
