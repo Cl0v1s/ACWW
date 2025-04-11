@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func buildPrompt(score int, receiverName string, senderDescription string, townName string, content string) string {
+func buildPrompt(language string, score int, receiverName string, senderDescription string, townName string, content string) string {
 	var tone string
 	if score > 50 {
 		tone = "nice or positive"
@@ -20,12 +20,13 @@ func buildPrompt(score int, receiverName string, senderDescription string, townN
 		%s
 		You received a letter from %s, another villager:
 		%s 
-		You will write your %s answer to this letter in 129 chars:
-	`, townName, senderDescription, receiverName, content, tone)
+		You will write your %s answer in %s to this letter in 129 chars:
+	`, townName, senderDescription, receiverName, content, tone, language)
 }
 
 type GenRequest struct {
-	SenderId      string `json:"senderId"`      // villager id
+	language      string `json:"language"`
+	SenderId      string `json:"senderId"`      // villager id 002d
 	ReceiverName  string `json:"receiverName"`  // receiver (player?) name
 	TownName      string `json:"townName"`      // town name
 	AttachementId int16  `json:"attachementId"` // id of the attached gift
@@ -39,12 +40,25 @@ func gen(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	prompt := buildPrompt(request.Score, request.ReceiverName, "", request.TownName, request.Content)
+
+	senderName, exists := getVillagerName(request.SenderId)
+	if !exists {
+		c.JSON(404, gin.H{"message": "Villager " + request.SenderId + " does not exists."})
+		return
+	}
+
+	senderDescription, err := loadVillagerInfos(senderName)
+	if err != nil {
+		c.JSON(500, gin.H{"message": err})
+		return
+	}
+
+	prompt := buildPrompt(request.language, request.Score, request.ReceiverName, *senderDescription, request.TownName, request.Content)
 	response, error := call(prompt)
 	if error != nil {
-		c.JSON(500, gin.H{"error": error})
+		c.JSON(500, gin.H{"message": error})
 	} else {
-		c.JSON(200, gin.H{"content": response.Choices[0].Message.Content})
+		c.JSON(200, gin.H{"message": response.Choices[0].Message.Content})
 	}
 }
 
