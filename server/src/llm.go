@@ -36,7 +36,7 @@ type APIResponse struct {
 	Usage   Usage    `json:"usage"`
 }
 
-func call(prompt string) (*APIResponse, error) {
+func Call(prompt string) (*APIResponse, error) {
 	url := "https://api.mistral.ai/v1/chat/completions"
 	apiKey := os.Getenv("API_KEY")
 	data := map[string]interface{}{

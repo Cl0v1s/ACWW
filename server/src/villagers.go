@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"os"
+	"strings"
 )
 
-func getVillagerName(id string) (string, bool) {
+func GetVillagerName(id string) (string, bool) {
 	idMap := map[string]string{
 		"0000": "Cyrano",
 		"0001": "Antonio",
@@ -162,17 +162,15 @@ func getVillagerName(id string) (string, bool) {
 	return name, exists
 }
 
-func loadVillagerInfos(name string) (*string, error) {
-	file := name + ".md"
+func getFile(name string) string {
+	return "villagers/" + strings.ReplaceAll(name, " ", "_") + ".md"
+}
+
+func LoadVillagerInfos(name string) (*string, error) {
+	file := getFile(name)
+
 	if _, err := os.Stat(file); os.IsNotExist(err) {
-		prompt := fmt.Sprintf("Tell me about %s in Animal Crossing", name)
-		response, err := call(prompt)
-		if err != nil {
-			return nil, err
-		}
-		infos := response.Choices[0].Message.Content
-		saveVillagerInfos(name, infos)
-		return &infos, nil
+		return nil, err
 	}
 	buffer, err := os.ReadFile(file)
 	if err != nil {
@@ -180,17 +178,4 @@ func loadVillagerInfos(name string) (*string, error) {
 	}
 	infos := string(buffer)
 	return &infos, nil
-}
-
-func saveVillagerInfos(name string, infos string) error {
-	filename := name + ".md"
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	_, errr := file.WriteString(infos)
-	if errr != nil {
-		return errr
-	}
-	return nil
 }

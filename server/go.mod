@@ -1,4 +1,4 @@
-module src
+module villager
 
 go 1.24.2
 
