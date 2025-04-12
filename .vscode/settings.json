@@ -79,6 +79,13 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "buffer": "cpp",
+        "executor": "cpp",
+        "internet": "cpp",
+        "io_context": "cpp",
+        "netfwd": "cpp",
+        "socket": "cpp",
+        "timer": "cpp"
     }
 }

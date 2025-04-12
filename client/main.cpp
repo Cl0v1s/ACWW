@@ -23,7 +23,7 @@ int main() {
     for(int i = 0; i < letterLength; i++) {
         print(letters[i]);
     }
-    deliverLetters(saveData, letters, letterLength, region);
+    deliverLetters(saveData, letters, 1, region);
     checksum(saveData);
     if(!writeSave("misc/save.sav", saveData)) {
         printf("Unable to write save file\n");

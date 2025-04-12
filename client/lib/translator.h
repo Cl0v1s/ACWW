@@ -83,6 +83,7 @@ std::string decode(const std::string& input, bool jpn, bool kor) {
     return output;
 }
 
+
 std::string encode(const std::string& input, bool jpn, bool kor) {
     if(kor) {
         printf("We do not support korea for now.\n");
@@ -90,11 +91,12 @@ std::string encode(const std::string& input, bool jpn, bool kor) {
     }
 
     std::string output = std::string(input);
-    const char* cinput = input.c_str();
+    const char* cinput = output.c_str();
     for(int i = 0; i < input.length(); i++) {
-        output[i] = encodeChar(cinput[i], jpn);
+        output[i] = encodeChar(cinput[i] & 0xFF, jpn);
     }
     return output;
 }
+
 
 #endif

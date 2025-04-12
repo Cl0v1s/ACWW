@@ -74,7 +74,7 @@ class LetterFactory {
             answer.SetReceiverTownId(letter.GetSenderTownId());
             answer.SetReceiverTownName(letter.GetSenderTownName());
 
-            answer.SetSenderPlayerId(0x2D);
+            answer.SetSenderPlayerId(letter.GetReceiverPlayerId());
             answer.SetSenderPlayerName(letter.GetReceiverPlayerName());
             answer.SetSenderTownId(letter.GetReceiverTownId());
             answer.SetSenderTownName(letter.GetReceiverTownName());
@@ -84,7 +84,7 @@ class LetterFactory {
             answer.SetAttachementId(this->GetAttachement(letter));
             answer.setPaperId(this->GetPaper());
             answer.SetFlags(FLAG_UNREAD);
-            answer.SetIntroFlag(INSERT_NAME_INTRO);
+            // answer.SetIntroFlag(INSERT_NAME_INTRO);
             answer.SetNameFlag(INSERT_NAME_INVENTORY);
 
             return answer;

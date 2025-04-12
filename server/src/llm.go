@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
+	"unicode/utf8"
 )
 
 // Définition des types Go pour la réponse de l'API
@@ -40,7 +42,8 @@ func Call(prompt string) (*APIResponse, error) {
 	url := "https://api.mistral.ai/v1/chat/completions"
 	apiKey := os.Getenv("API_KEY")
 	data := map[string]interface{}{
-		"model": "mistral-small-latest",
+		"model":      "mistral-small-latest",
+		"max_tokens": utf8.RuneCountInString(prompt) + 129, // 129 is the max length of a letter in the game
 		"messages": []map[string]string{
 			{"role": "user", "content": prompt},
 		},
@@ -63,6 +66,8 @@ func Call(prompt string) (*APIResponse, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("non-200 status code: %d", resp.StatusCode)
 	}
+
+	time.Sleep(2 * time.Second) // we dont want to spam them
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
