@@ -7,6 +7,9 @@
 
 #include "./letter.h"
 #include "utils.h"
+#include "./net.h"
+
+Net* net = new NetComputerImpl("127.0.0.1", 8080);
 
 class LetterFactory {
     private:
@@ -20,10 +23,36 @@ class LetterFactory {
         /**
          * Generate answer content from player's letter
          */
-        void GenerateBody(Letter &letter, Letter & answer) {
-            answer.SetIntroPart(std::string("Pour "));
-            answer.SetBodyPart(std::string("Covfefe"));
-            answer.SetEndPart(std::string("Ton voisin"));
+        void GenerateBody(Letter &letter, Letter &answer) {
+            char senderId[10]; 
+            sprintf(senderId, "%04x", answer.GetSenderPlayerId());
+
+            std::string intro = letter.GetIntroPart();
+            std::string body = letter.GetBodyPart();
+            std::string end = letter.GetEndPart();
+
+            std::string reply = net->call("french", senderId, answer.GetReceiverPlayerName().c_str(), answer.GetSenderTownName().c_str(), letter.GetAttachementId(), 100, intro, body, end);
+            if(reply.length() == 0) {
+                printf("Unable to generate reply\n");
+                return;
+            }
+
+            for (size_t i = 0; i < reply.length() - 1; ++i) {
+                if (reply[i] == '\n' && reply[i + 1] == '\n') {
+                    reply.erase(i, 1);
+                    --i;
+                }
+            }
+
+            size_t firstNewline = reply.find('\n');
+            size_t secondNewline = reply.find('\n', firstNewline + 1);
+            std::string introPart = reply.substr(0, firstNewline);
+            std::string bodyPart = reply.substr(firstNewline + 1, secondNewline - firstNewline - 1);
+            std::string endPart = reply.substr(secondNewline + 1);
+
+            answer.SetIntroPart(introPart);
+            answer.SetBodyPart(bodyPart);
+            answer.SetEndPart(endPart);
         }
 
         /**

@@ -16,7 +16,32 @@
 #define INVALID_STATUS 2
 #define INVALID_BODY 3
 
-int buildBody(char* dest, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &content) {
+std::string jsonEscape(const std::string &input) {
+    std::string output;
+    for (char c : input) {
+        switch (c) {
+            case '\"': output += "\\\""; break;
+            case '\\': output += "\\\\"; break;
+            case '\b': output += "\\b"; break;
+            case '\f': output += "\\f"; break;
+            case '\n': output += "\\n"; break;
+            case '\r': output += "\\r"; break;
+            case '\t': output += "\\t"; break;
+            default:
+                if (c >= 0x20 && c <= 0x7E) {
+                    output += c;
+                }
+        }
+    }
+    return output;
+}
+
+int buildBody(char* dest, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) {
+
+    intro = jsonEscape(intro);
+    body = jsonEscape(body);
+    end = jsonEscape(end);
+    
     return sprintf(dest, 
         "{\n"
         "  \"language\": \"%s\",\n"
@@ -25,9 +50,11 @@ int buildBody(char* dest, const char* language, const char* senderId, const char
         "  \"townName\": \"%s\",\n"
         "  \"attachementId\": %u,\n"
         "  \"score\": %u,\n"
-        "  \"content\": \"%s\"\n"
+        "  \"intro\": \"%s\",\n"
+        "  \"body\": \"%s\",\n"
+        "  \"end\": \"%s\"\n"
         "}\0", 
-        language, senderId, receiverName, townName, attachementId, score, content.c_str()
+        language, senderId, receiverName, townName, attachementId, score, intro.c_str(), body.c_str(), end.c_str()
     );
 }
 
@@ -46,9 +73,9 @@ int buildRequest(char* dest, const char* addr, int port, const char* json) {
     );
 }
 
-int emit(int soc, const char* addr, int port, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &content) {
+int emit(int soc, const char* addr, int port, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) {
     char* raw = (char*)malloc(sizeof(char) * 1000); // big size to be sure to store everything
-    buildBody(raw, language, senderId, receiverName, townName, attachementId, score, content);
+    buildBody(raw, language, senderId, receiverName, townName, attachementId, score, intro, body, end);
     char* json = (char*)malloc(sizeof(char) * strlen(raw) + 1); // +1 to keep the \0
     memcpy(json, raw, sizeof(char) * strlen(raw) + 1);
     buildRequest(raw, addr, port, json);
@@ -90,6 +117,8 @@ int receive(int soc, std::string &answer) {
         response += buffer;
     }
 
+    printf("%s\n", response.c_str());
+
     if (bytesRead < 0) {
         return -1;
     }
@@ -112,20 +141,21 @@ int receive(int soc, std::string &answer) {
         return -1;
     }
 
+    answer += body;
+
     int statusCode = std::stoi(headers.substr(statusStart, statusEnd - statusStart));
     if (statusCode != 200) {
         errno = statusCode;
         return -1;
     }
 
-    answer += body;
     return 0;
 }
 
 
 class Net {
     public:
-        virtual std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &content) = 0;
+        virtual std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) = 0;
 };
 
 class NetComputerImpl: public Net {
@@ -151,14 +181,14 @@ class NetComputerImpl: public Net {
             free(addr);
         }
 
-        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &content) override {
+        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) override {
             int soc = socket(AF_INET, SOCK_STREAM, 0);
             int result = connect(soc, (struct sockaddr *)&this->remote, sizeof(this->remote));
             if(result != 0) {
                 printf("%d: unable to connect to %s\n%s\n", errno, addr, strerror(errno) );
                 return std::string("");
             }
-            result = emit(soc, addr, port, language, senderId, receiverName, townName, attachementId, score, content);
+            result = emit(soc, addr, port, language, senderId, receiverName, townName, attachementId, score, intro, body, end);
             if(result != 0) {
                 printf("%d: unable to send data\n%s\n", errno, strerror(errno) );
                 return std::string("");
@@ -167,7 +197,7 @@ class NetComputerImpl: public Net {
             std::string anwser("");
             result = receive(soc, anwser);
             if(result != 0) {
-                printf("%d: unable to receive data\n%s\n", errno, strerror(errno) );
+                printf("%d: unable to receive data\n%s\n", errno, anwser);
                 return std::string("");
             }
 
@@ -179,7 +209,7 @@ class NetComputerImpl: public Net {
 
 class NetDSImpl: public Net {
     public:
-        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &content) override {
+        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) override {
             // Implementation for DS
             return std::string();
         }

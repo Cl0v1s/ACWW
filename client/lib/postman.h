@@ -70,7 +70,8 @@ void deliverLetters(char* save, Letter* letters, int length, LetterMemory* regio
             done = true;
         } else { 
             int offset = region->MAIL_BOX + slot * letterRegion->LETTER_SIZE;
-            factory.Answer(letters[i], save, offset, letterRegion);
+            Letter ans = factory.Answer(letters[i], save, offset, letterRegion);
+            print(ans);
         }
         i += 1;
     }
