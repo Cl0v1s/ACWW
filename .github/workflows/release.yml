@@ -25,12 +25,11 @@ jobs:
         working-directory: client
         run: make
 
-      - name: Build server with Go
-        run: |
-          docker run --rm -v ${{ github.workspace }}/server:/server -w /server golang:latest sh -c "
-          go mod tidy &&
-          go build -o server
-          "
+      - name: Build Go code
+        container:
+          image: golang:latest
+        working-directory: server
+        run: go mod tidy && go build -o server
 
       - name: Create Draft Release
         id: create_release
