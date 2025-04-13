@@ -29,7 +29,7 @@ LetterStruct* selectRegion(LetterMemory* region) {
     if(region == &LETTER_MEMORY_EUR_USA) {
         return &LETTER_EUR_USA;
     }
-    printf("We only support EU/USA for now.\n");
+    consolef("We only support EU/USA for now.\n");
     exit(1);
 }
 
@@ -66,7 +66,7 @@ void deliverLetters(char* save, Letter* letters, int length, LetterMemory* regio
     while(done == false && i < length) {
         int slot = getMailboxSlot(save, region);
         if(slot >= region->MAIL_BOX_LENGTH) {
-            printf("Not enough room in mailbox to write all the answers...\n");
+            consolef("Not enough room in mailbox.\n");
             done = true;
         } else { 
             int offset = region->MAIL_BOX + slot * letterRegion->LETTER_SIZE;

@@ -9,7 +9,7 @@
 #include "utils.h"
 #include "./net.h"
 
-Net* net = new NetComputerImpl("127.0.0.1", 8080);
+Net net("127.0.0.1", 8080);
 
 class LetterFactory {
     private:
@@ -31,9 +31,9 @@ class LetterFactory {
             std::string body = letter.GetBodyPart();
             std::string end = letter.GetEndPart();
 
-            std::string reply = net->call("french", senderId, answer.GetReceiverPlayerName().c_str(), answer.GetSenderTownName().c_str(), letter.GetAttachementId(), 100, intro, body, end);
+            std::string reply = net.call("french", senderId, answer.GetReceiverPlayerName().c_str(), answer.GetSenderTownName().c_str(), letter.GetAttachementId(), 100, intro, body, end);
             if(reply.length() == 0) {
-                printf("Unable to generate reply\n");
+                consolef("Unable to generate reply\n");
                 return;
             }
 

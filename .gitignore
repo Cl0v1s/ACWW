@@ -1,1 +1,4 @@
 *.out
+*.elf
+*.nds
+build

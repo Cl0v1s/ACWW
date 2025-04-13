@@ -5,6 +5,7 @@
 #include <string>
 #include <cstring>
 
+#include "utils.h"
 #include "translator.h"
 
 #define FLAG_NOT_EXIST 0x0
@@ -148,6 +149,9 @@ LetterStruct LETTER_KOR = {
     .FLAGS = 0xFA,
     .ATTACHMENT_ITEM = 0xFC
 };
+
+
+
 
 class Letter {
     private:
@@ -309,5 +313,21 @@ class Letter {
             return this->GetFlags() != 0;
         }
 };
+
+void print(Letter &letter) {
+    consolef("Sender PlayerId: %04x\n", letter.GetSenderPlayerId());
+    consolef("Sender TownID: %04x\n", letter.GetSenderTownId());
+    consolef("Sender Player: %s\n", letter.GetSenderPlayerName().c_str());
+    consolef("Sender Town: %s\n", letter.GetSenderTownName().c_str());
+    consolef("Receiver Player: %s\n", letter.GetReceiverPlayerName().c_str());
+    consolef("Receiver PlayerId: %04x\n", letter.GetReceiverPlayerId());
+    consolef("Receiver TownId: %04x\n", letter.GetReceiverTownId());
+    consolef("Receiver Town: %s\n", letter.GetReceiverTownName().c_str());
+    consolef("Intro: %s\n", letter.GetIntroPart().c_str());
+    consolef("Body: %s\n", letter.GetBodyPart().c_str());
+    consolef("End: %s\n", letter.GetEndPart().c_str());
+    consolef("Flags: %04x\n", letter.GetFlags());
+    consolef("IntroIndex: %04x\n", letter.GetIntroIndex());
+}
 
 #endif

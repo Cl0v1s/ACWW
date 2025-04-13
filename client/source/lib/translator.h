@@ -61,7 +61,7 @@ unsigned char encodeChar(wchar_t input, bool jpn) {
     }
 
     int index = -1;
-    size_t length = size / sizeof(table[0]);
+    int length = size / sizeof(table[0]);
     int i = 0;
     while(index == -1 && i < length) { // we can probably optimize that by creating reversed array 
         if(table[i] == input) {
@@ -70,7 +70,7 @@ unsigned char encodeChar(wchar_t input, bool jpn) {
         i += 1;
     }
     if(index == -1) {
-        printf("Unkown char %c %04x\n", input, input);
+        consolef("Unkown char %c %04x\n", input, input);
         return jpn ? 232 : 156; // ?
     }
     return index;
@@ -79,13 +79,13 @@ unsigned char encodeChar(wchar_t input, bool jpn) {
 
 std::string decode(const std::string& input, bool jpn, bool kor) {
     if(kor) {
-        printf("We do not support korea for now.\n");
+        consolef("We do not support korea for now.\n");
         exit(1);
     }
 
     std::string output = std::string(input);
     const char* cinput = input.c_str();
-    for(int i = 0; i < input.length(); i++) {
+    for(unsigned int i = 0; i < input.length(); i++) {
         output[i] = decodeChar(cinput[i], jpn);
     }
     return output;
@@ -94,13 +94,13 @@ std::string decode(const std::string& input, bool jpn, bool kor) {
 
 std::string encode(const std::string& input, bool jpn, bool kor) {
     if(kor) {
-        printf("We do not support korea for now.\n");
+        consolef("We do not support korea for now.\n");
         exit(1);
     }
 
     std::string output = std::string(input);
     const char* cinput = output.c_str();
-    for(int i = 0; i < input.length(); i++) {
+    for(unsigned int i = 0; i < input.length(); i++) {
         output[i] = encodeChar(cinput[i] & 0xFF, jpn);
     }
     return output;

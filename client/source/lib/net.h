@@ -6,11 +6,23 @@
 #include <string>
 #include <errno.h>
 #include <unistd.h>
-// Linux includes 
+
+#ifndef ARM9
 
 #include <sys/socket.h>
 #include <netinet/in.h> 
 #include <arpa/inet.h>
+#include <netdb.h>
+
+#else 
+
+#include <nds.h>
+#include <dswifi9.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+
+#endif
 
 #define INVALID_RESPONSE 1
 #define INVALID_STATUS 2
@@ -53,7 +65,7 @@ int buildBody(char* dest, const char* language, const char* senderId, const char
         "  \"intro\": \"%s\",\n"
         "  \"body\": \"%s\",\n"
         "  \"end\": \"%s\"\n"
-        "}\0", 
+        "}", 
         language, senderId, receiverName, townName, attachementId, score, intro.c_str(), body.c_str(), end.c_str()
     );
 }
@@ -68,7 +80,7 @@ int buildRequest(char* dest, const char* addr, int port, const char* json) {
         "Content-Length: %d\r\n"
         "Content-Type: application/json\r\n"
         "\r\n"
-        "%s\0",
+        "%s",
         addr, port, strlen(json), json
     );
 }
@@ -84,9 +96,9 @@ int emit(int soc, const char* addr, int port, const char* language, const char* 
     memcpy(request, raw, sizeof(char) * strlen(raw) + 1);
     free(raw);
 
-    // printf("Sending:\n");
-    // printf(request);
-    // printf("\n");
+    // consolef("Sending:\n");
+    // consolef(request);
+    // consolef("\n");
 
     int bytesSent;
 
@@ -101,7 +113,7 @@ int emit(int soc, const char* addr, int port, const char* language, const char* 
         totalSent += bytesSent;
     }
 
-    // printf("Sent %d bytes\n", totalSent);
+    // consolef("Sent %d bytes\n", totalSent);
     free(request);
     return 0;
 }
@@ -117,7 +129,7 @@ int receive(int soc, std::string &answer) {
         response += buffer;
     }
 
-    printf("%s\n", response.c_str());
+    consolef("%s\n", response.c_str());
 
     if (bytesRead < 0) {
         return -1;
@@ -152,52 +164,43 @@ int receive(int soc, std::string &answer) {
     return 0;
 }
 
-
 class Net {
-    public:
-        virtual std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) = 0;
-};
-
-class NetComputerImpl: public Net {
     private:
         sockaddr_in remote;
         char* addr;
         int port;
-
     public:
-        NetComputerImpl(const char* _addr, int _port) {
+        Net(const char* _addr, int _port) {
             addr = (char*)malloc(sizeof(char) * strlen(_addr));
             memcpy(addr, _addr, sizeof(char) * strlen(_addr));
+            port = _port;
+            struct hostent * myhost = gethostbyname(_addr);
             remote.sin_family = AF_INET;
             remote.sin_port = htons(_port);
-            int res = inet_pton(AF_INET, _addr, &remote.sin_addr);
-            if(res != 1) {
-                printf("addr is not a valid address.\n");
-                exit(1);
-            }
+            remote.sin_addr.s_addr= *( (unsigned long *)(myhost->h_addr_list[0]) );
         }
 
-        ~NetComputerImpl() {
+        ~Net() {
             free(addr);
         }
 
-        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) override {
+        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) {
             int soc = socket(AF_INET, SOCK_STREAM, 0);
             int result = connect(soc, (struct sockaddr *)&this->remote, sizeof(this->remote));
             if(result != 0) {
-                printf("%d: unable to connect to %s\n%s\n", errno, addr, strerror(errno) );
+                consolef("%d: unable to connect to %s\n%s\n", errno, addr, strerror(errno) );
                 return std::string("");
             }
             result = emit(soc, addr, port, language, senderId, receiverName, townName, attachementId, score, intro, body, end);
             if(result != 0) {
-                printf("%d: unable to send data\n%s\n", errno, strerror(errno) );
+                consolef("%d: unable to send data\n%s\n", errno, strerror(errno) );
                 return std::string("");
             }
             
             std::string anwser("");
             result = receive(soc, anwser);
             if(result != 0) {
-                printf("%d: unable to receive data\n%s\n", errno, anwser);
+                consolef("%d: unable to receive data\n%s\n", errno, anwser.c_str());
                 return std::string("");
             }
 
@@ -206,14 +209,5 @@ class NetComputerImpl: public Net {
             return anwser;
         }
 };
-
-class NetDSImpl: public Net {
-    public:
-        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) override {
-            // Implementation for DS
-            return std::string();
-        }
-};
-
 
 #endif 
