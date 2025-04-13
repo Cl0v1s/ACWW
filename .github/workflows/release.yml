@@ -26,14 +26,11 @@ jobs:
         run: make
 
       - name: Build server with Go
-        uses: docker://golang:latest
-        with:
-          args: |
-            sh -c "
-            cd server &&
-            go mod tidy &&
-            go build -o server
-            "
+        run: |
+          docker run --rm -v ${{ github.workspace }}/server:/server -w /server golang:latest sh -c "
+          go mod tidy &&
+          go build -o server
+          "
 
       - name: Create Draft Release
         id: create_release
