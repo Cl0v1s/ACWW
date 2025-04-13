@@ -55,6 +55,11 @@ unsigned char encodeChar(wchar_t input, bool jpn) {
         table = wwCharacterDictionaryJapanese;
         size = sizeof(wwCharacterDictionaryJapanese);
     }
+
+    if(!jpn) { // special char replacement for USA_EUR, yup that's not cool but editing the table above is not an option so...
+        if(input == 0x0027) return 0x61; // replace ' for ’
+    }
+
     int index = -1;
     size_t length = size / sizeof(table[0]);
     int i = 0;
@@ -64,7 +69,10 @@ unsigned char encodeChar(wchar_t input, bool jpn) {
         }
         i += 1;
     }
-    if(index == -1) return jpn ? 232 : 156; // ?
+    if(index == -1) {
+        printf("Unkown char %c %04x\n", input, input);
+        return jpn ? 232 : 156; // ?
+    }
     return index;
 }
 

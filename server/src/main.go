@@ -74,7 +74,7 @@ func gen(c *gin.Context) {
 	} else {
 		reply := response.Choices[0].Message.Content
 
-		// we cant trust llms regarding response lengt
+		// we cant trust llms regarding response length
 		parts := strings.Split(reply, "\n\n")
 		body := parts[1]
 		for utf8.RuneCountInString(body) > 100 {
