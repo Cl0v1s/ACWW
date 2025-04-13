@@ -3,3 +3,4 @@
 *.nds
 build
 client/client
+server/server
