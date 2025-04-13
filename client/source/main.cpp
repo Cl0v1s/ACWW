@@ -1,7 +1,7 @@
 
 #define DEBUG false
 
-#include "lib/sav.h"
+#include "lib/files.h"
 #include "lib/letter.h"
 #include "lib/postman.h"
 #include "lib/utils.h"
@@ -13,11 +13,11 @@
 
 
 int main() {
-    initSave();
+    initFiles();
     initConsole();
     char* saveData;
 
-    if(!readSave("misc/three-letters.sav", &saveData)) {
+    if(!readFile("misc/three-letters.sav", &saveData)) {
         consolef("Unable to load save file\n");
     }
     consolef("Loading letters\n");
@@ -30,7 +30,7 @@ int main() {
     }
     deliverLetters(saveData, letters, 1, region);
     checksum(saveData);
-    if(!writeSave("misc/save.sav", saveData)) {
+    if(!writeFile("misc/save.sav", saveData)) {
         consolef("Unable to write save file\n");
     }
     consolef("Save edited, starting the game...\n");

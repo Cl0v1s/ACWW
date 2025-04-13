@@ -1,5 +1,5 @@
-#ifndef SAV_H
-#define SAV_H
+#ifndef FILES_H
+#define FILES_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -24,7 +24,7 @@
 #define SAVCOPY_OFFSET 0x15FE0
 #define SAVCOPY_SIZE 0x15FE0
 
-void initSave()
+void initFiles()
 {
     #ifdef ARM9
     if(!fatInitDefault()) {
@@ -34,7 +34,7 @@ void initSave()
     #endif
 }
 
-bool readSave(const char *filename, char **content)
+bool readFile(const char *filename, char **content)
 {
     struct stat info;
     if (stat(filename, &info) != 0)
@@ -79,7 +79,7 @@ void checksum(char *save)
     memmove(save + SAVCOPY_OFFSET, save, SAVCOPY_SIZE);
 }
 
-bool writeSave(const char *filename, char *content)
+bool writeFile(const char *filename, char *content)
 {
     FILE *fp = fopen(filename, "w");
     if (fp == NULL)
