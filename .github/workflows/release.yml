@@ -31,6 +31,4 @@ jobs:
           release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
-          files: |
-            client/client.nds
-            client/client
+          files: client/client.nds
