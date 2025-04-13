@@ -57,7 +57,7 @@ unsigned char encodeChar(wchar_t input, bool jpn) {
     }
 
     if(!jpn) { // special char replacement for USA_EUR, yup that's not cool but editing the table above is not an option so...
-        if(input == 0x0027) return 0x61; // replace ' for ’
+        if(input == 0x0027) return 0xC1; // replace ' for ’
     }
 
     int index = -1;
@@ -80,7 +80,7 @@ unsigned char encodeChar(wchar_t input, bool jpn) {
 std::string decode(const std::string& input, bool jpn, bool kor) {
     if(kor) {
         consolef("We do not support korea for now.\n");
-        exit(1);
+        dsExit(1);
     }
 
     std::string output = std::string(input);
@@ -95,7 +95,7 @@ std::string decode(const std::string& input, bool jpn, bool kor) {
 std::string encode(const std::string& input, bool jpn, bool kor) {
     if(kor) {
         consolef("We do not support korea for now.\n");
-        exit(1);
+        dsExit(1);
     }
 
     std::string output = std::string(input);

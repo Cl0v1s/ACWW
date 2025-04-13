@@ -1,7 +1,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <stdlib.h>
 #include <cstdarg>
+#include <stdio.h>
 
 #ifdef ARM9
 
@@ -9,9 +11,7 @@
 
 #endif
 
-#include "letter.h"
-
-void logInit() {
+void initConsole() {
     #ifdef ARM9
 	videoSetMode(MODE_5_2D);
 	videoSetModeSub(MODE_0_2D); //sub bg 0 will be used to print text
@@ -37,6 +37,18 @@ void consolef(const char* tmpl, ...) {
     #endif
 
     va_end(args);
+}
+
+void dsExit(int code) {
+    #ifdef ARM9
+        consolef("Press start to exit...\n");
+        while(pmMainLoop()) {
+            swiWaitForVBlank();
+            int keys = keysDown();
+            if(keys & KEY_START) break;
+        }
+    #endif
+    exit(code);
 }
 
 #endif

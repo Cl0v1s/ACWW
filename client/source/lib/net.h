@@ -76,6 +76,7 @@ int buildRequest(char* dest, const char* addr, int port, const char* json) {
         "GET /gen HTTP/1.0\r\n"
         "Host: %s:%d\r\n"
         "User-Agent: animal-crossing\r\n"
+        "Connection: close\r\n"
         "Accept: application/json\r\n"
         "Content-Length: %d\r\n"
         "Content-Type: application/json\r\n"
@@ -123,13 +124,23 @@ int receive(int soc, std::string &answer) {
     int bytesRead;
     std::string response;
 
+    consolef("Waiting for server response...\n");
+    // Set a timeout for the socket
+    struct timeval timeout;
+    timeout.tv_sec = 10; // 10 seconds
+    timeout.tv_usec = 0;
+    setsockopt(soc, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
+
     // Read the response from the server
     while ((bytesRead = recv(soc, buffer, sizeof(buffer) - 1, 0)) > 0) {
         buffer[bytesRead] = '\0'; // Null-terminate the buffer
         response += buffer;
+        // consolef("%s\n", response.c_str());
     }
-
-    consolef("%s\n", response.c_str());
+    if (bytesRead < 0 && errno == EWOULDBLOCK) {
+        consolef("Timeout reached while waiting for server response.\n");
+        return -1;
+    }
 
     if (bytesRead < 0) {
         return -1;
@@ -171,6 +182,13 @@ class Net {
         int port;
     public:
         Net(const char* _addr, int _port) {
+            #ifdef ARM9
+                if(!Wifi_InitDefault(WFC_CONNECT)) {
+                    consolef("Unable to start wifi.\n");
+                    dsExit(1);
+                }
+            #endif
+
             addr = (char*)malloc(sizeof(char) * strlen(_addr));
             memcpy(addr, _addr, sizeof(char) * strlen(_addr));
             port = _port;
@@ -205,7 +223,11 @@ class Net {
             }
 
             shutdown(soc, SHUT_RDWR);
-            close(soc);
+            #ifndef ARM9
+                close(soc);
+            #else 
+                closesocket(soc);
+            #endif
             return anwser;
         }
 };

@@ -30,7 +30,8 @@ LetterStruct* selectRegion(LetterMemory* region) {
         return &LETTER_EUR_USA;
     }
     consolef("We only support EU/USA for now.\n");
-    exit(1);
+    dsExit(1);
+    return 0;
 }
 
 int loadLetters(char* save, int addr, int size,  Letter* letters, LetterStruct* region, bool dryRun = false) {
