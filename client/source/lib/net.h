@@ -28,6 +28,8 @@
 #define INVALID_STATUS 2
 #define INVALID_BODY 3
 
+
+
 std::string jsonEscape(const std::string &input) {
     std::string output;
     for (char c : input) {
@@ -124,7 +126,7 @@ int receive(int soc, std::string &answer) {
     int bytesRead;
     std::string response;
 
-    consolef("Waiting for server response...\n");
+    // consolef("Waiting for server response...\n");
     // Set a timeout for the socket
     struct timeval timeout;
     timeout.tv_sec = 10; // 10 seconds
@@ -231,5 +233,12 @@ class Net {
             return anwser;
         }
 };
+
+Net* net;
+
+void initNet(const char* server, int port) {
+    consolef("Starting networking...\n");
+    net = new Net(server, port);
+}
 
 #endif 

@@ -49,12 +49,14 @@ bool readFile(const char *filename, char **content)
     FILE *fp = fopen(filename, "rb");
     if (fp == NULL)
     {
+        consolef("File %s does not exist.\n", filename);
         return false;
     }
 
     size_t blocks_read = fread(*content, info.st_size, 1, fp);
     if (blocks_read != 1)
     {
+        consolef("Unable to read file %s.\n", filename);
         return false;
     }
     fclose(fp);

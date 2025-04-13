@@ -9,7 +9,11 @@
 #include "utils.h"
 #include "./net.h"
 
-Net net("127.0.0.1", 8080);
+typedef struct {
+    std::string intro;
+    std::string body;
+    std::string end;
+} Content;
 
 class LetterFactory {
     private:
@@ -23,18 +27,17 @@ class LetterFactory {
         /**
          * Generate answer content from player's letter
          */
-        void GenerateBody(Letter &letter, Letter &answer) {
+        int GenerateContent(Content &content, Letter &letter, const char* lang) {
             char senderId[10]; 
-            sprintf(senderId, "%04x", answer.GetSenderPlayerId());
+            sprintf(senderId, "%04x", letter.GetReceiverPlayerId());
 
             std::string intro = letter.GetIntroPart();
             std::string body = letter.GetBodyPart();
             std::string end = letter.GetEndPart();
 
-            std::string reply = net.call("french", senderId, answer.GetReceiverPlayerName().c_str(), answer.GetSenderTownName().c_str(), letter.GetAttachementId(), 100, intro, body, end);
+            std::string reply = net->call(lang, senderId, letter.GetSenderPlayerName().c_str(), letter.GetReceiverTownName().c_str(), letter.GetAttachementId(), 100, intro, body, end);
             if(reply.length() == 0) {
-                consolef("Unable to generate reply\n");
-                return;
+                return - 1;
             }
 
             for (size_t i = 0; i < reply.length() - 1; ++i) {
@@ -50,9 +53,11 @@ class LetterFactory {
             std::string bodyPart = reply.substr(firstNewline + 1, secondNewline - firstNewline - 1);
             std::string endPart = reply.substr(secondNewline + 1);
 
-            answer.SetIntroPart(introPart);
-            answer.SetBodyPart(bodyPart);
-            answer.SetEndPart(endPart);
+            content.intro = introPart;
+            content.body = bodyPart;
+            content.end = endPart;
+
+            return 0;
         }
 
         /**
@@ -66,8 +71,17 @@ class LetterFactory {
         /**
          * Generate answer letter from player's letter
          */
-        Letter Answer(Letter &letter, char* save, int offset, LetterStruct* region) {
+        Letter Answer(Letter &letter, char* save, int offset, LetterStruct* region, const char* lang) {
             Letter answer(save, offset, region);
+            Content content;
+            if(this->GenerateContent(content, letter, lang) == -1) {
+                consolef("Unable to generate reply\n");
+                return answer;
+            }
+            answer.SetIntroPart(content.intro);
+            answer.SetBodyPart(content.body);
+            answer.SetEndPart(content.end);
+
             // back to the sender from the receiver
             answer.SetReceiverPlayerId(letter.GetSenderPlayerId());
             answer.SetReceiverPlayerName(letter.GetSenderPlayerName());
@@ -79,7 +93,6 @@ class LetterFactory {
             answer.SetSenderTownId(letter.GetReceiverTownId());
             answer.SetSenderTownName(letter.GetReceiverTownName());
 
-            this->GenerateBody(letter, answer);
 
             answer.SetAttachementId(this->GetAttachement(letter));
             answer.setPaperId(this->GetPaper());

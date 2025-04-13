@@ -6,32 +6,42 @@
 #include "lib/postman.h"
 #include "lib/utils.h"
 #include "lib/net.h"
+#include "lib/config.h"
 
 #include <string>
-// #include <stdio.h>
-// #include <nds.h>
 
 
 int main() {
     initFiles();
     initConsole();
     char* saveData;
+    Config config = loadConfig();
+    printConfig(config);
+    initNet(config.server.c_str(), config.port);
 
-    if(!readFile("misc/three-letters.sav", &saveData)) {
+    if(!readFile(config.path.c_str(), &saveData)) {
         consolef("Unable to load save file\n");
+        dsExit(1);
     }
-    consolef("Loading letters\n");
+
+    std::string backup = config.path + ".bak";
+    if(!writeFile(backup.c_str(), saveData)) {
+        consolef("Unable to write backup file\n");
+        dsExit(1);
+    }
+
     LetterMemory* region = &LETTER_MEMORY_EUR_USA;
     Letter* letters = (Letter*)malloc(region->POST_BOX_LENGTH * sizeof(Letter));
     int letterLength = gatherLetter(saveData, letters, region);
     consolef("Loaded %d letters\n", letterLength);
-    for(int i = 0; i < letterLength; i++) {
-        print(letters[i]);
-    }
-    deliverLetters(saveData, letters, 1, region);
+    // for(int i = 0; i < letterLength; i++) {
+    //     print(letters[i]);
+    // }
+    deliverLetters(saveData, letters, letterLength, region, config.lang.c_str());
     checksum(saveData);
-    if(!writeFile("misc/save.sav", saveData)) {
+    if(!writeFile(config.path.c_str(), saveData)) {
         consolef("Unable to write save file\n");
+        dsExit(1);
     }
     consolef("Save edited, starting the game...\n");
     dsExit(0);
