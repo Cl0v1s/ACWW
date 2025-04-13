@@ -17,8 +17,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y make g++
-          wget https://github.com/devkitPro/pacman/releases/latest/download/devkitpro-pacman.deb
-          sudo dpkg -i devkitpro-pacman.deb
+          wget https://apt.devkitpro.org/install-devkitpro-pacman
+          chmod +x ./install-devkitpro-pacman
+          sudo ./install-devkitpro-pacman
           sudo dkp-pacman -Syu --noconfirm
           sudo dkp-pacman -S nds-dev --noconfirm
 
