@@ -14,10 +14,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-
-      - name: Build for Linux
-        working-directory: client
-        run: make build-linux
+      # - name: Build for Linux
+      #   working-directory: client
+      #   run: make build-linux
 
       - name: Build default target
         working-directory: client
