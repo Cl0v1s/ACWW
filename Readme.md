@@ -1,0 +1,75 @@
+# Animal Crossing Wild World - Letter Response System
+
+This project aims to enhance the gameplay experience of **Animal Crossing: Wild World** by enabling villagers to genuinely respond to letters sent by players. The system consists of two main components: a **client** (a DS homebrew application) and a **server** (responsible for generating responses).
+
+## Overview
+
+The system works as follows:
+1. The **client** reads the letters sent by the player from the game's memory.
+2. The **server** generates personalized responses based on the villager's personality and the content of the player's letter.
+3. The **client** injects the generated response into the game's memory, replacing the player's letter to prevent duplicate responses.
+
+## Features
+
+### Minimum Viable Product (MVP)
+- **Read Sent Letters**: Extract letters sent by the player from the game's memory.
+- **Generate Responses**: Use a language model (currently Mistral) to create replies tailored to the villager's personality.
+- **Inject Responses**: Insert the generated replies into the game's memory.
+
+### Future Enhancements
+- **Prevent duplicates**: Remove letters from memory to prevent the game from generate replies by itself.
+- **Letter Scoring**: Simulate the in-game scoring system to influence friendship levels with villagers and response tone.
+- **Gift System**: Add gifts to villager responses based on the player's letter content or attached items.
+
+## Technical Details
+
+### Memory Layout
+- **Sent Letters**: Stored in a buffer starting at `0x00014640` (replicated at `0x0002a620`). The buffer supports up to 10 letters.
+- **Mailbox Letters**: Located at `0x00012010` with a capacity of 10 slots. Letters are cleared from this area once moved to the player's inventory.
+- **Pocket Letters**: Found at `0x00001120`, with space for 10 letters. (Unused by this system)
+
+### Letter Format
+- Letters follow a specific structure, including headers, body, and footer. Key fields include:
+    - **Villager ID**: Identifies the sender or recipient.
+    - **Message Body**: Encoded as in-game characters.
+    - **Flags**: Control display options, such as showing the NPC's name in the inventory.
+
+For more details, refer to the [ACWW-Web-SaveEditor Letter Format](https://github.com/Universal-Team/ACWW-Web-SaveEditor/blob/main/assets/js/core/letter.js).
+
+### Villager Data
+Villager information, such as species and personality, is extracted using scrapped data and mapped to in-game IDs. This ensures accurate and immersive responses.
+
+### Checksum Validation
+To prevent tampering, the game uses a checksum mechanism. The checksum is a little-endian sum of all memory values, ensuring data integrity.
+
+## Components
+
+### Client
+A DS homebrew application that:
+- Reads and writes memory to interact with the game's save data.
+- Communicates with the server to fetch generated responses.
+- Requires configuration via a file named `ac.config` located alongside the homebrew on the DS's SD card. The file must be formatted as follows:
+  ```
+  <ip server address>
+  <server port>
+  <player's language>
+  <path to save file on the sd card>
+  ```
+
+### Server
+A backend system that:
+- Processes requests from the client.
+- Generates villager responses using a language model (currently Mistral, with plans for a local CPU-based model).
+
+## References
+
+- [ACWW-Web-SaveEditor](https://github.com/Universal-Team/ACWW-Web-SaveEditor/blob/main/assets/js/core/letter.js)
+- [Animal Crossing Letters Project](https://jamchamb.net/projects/animal-crossing-letters)
+- [GameFAQs Discussion on Letter Buffers](https://gamefaqs.gamespot.com/boards/920786-animal-crossing-wild-world/41195712)
+
+## Getting Started
+
+1. **Set Up the Client**: Install the DS homebrew application on your device.
+2. **Configure the Client**: Create the `ac.config` file on the SD card with the required settings.
+3. **Run the Server**: Deploy the server locally or on a remote machine.
+4. **Send Letters**: Write letters to villagers in-game
