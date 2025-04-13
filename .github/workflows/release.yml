@@ -25,12 +25,6 @@ jobs:
         working-directory: client
         run: make
 
-      - name: Build Go code
-        container:
-          image: golang:latest
-        working-directory: server
-        run: go mod tidy && go build -o server src/*.go
-
       - name: Create Draft Release
         id: create_release
         uses: actions/create-release@v1
@@ -50,16 +44,6 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: client/client.nds
           asset_name: client.nds
-          asset_content_type: application/octet-stream
-
-      - name: Upload Release Asset (Server)
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: server/server
-          asset_name: server
           asset_content_type: application/octet-stream
 
       - uses: eregon/publish-release@v1
