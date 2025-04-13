@@ -2,3 +2,4 @@
 *.elf
 *.nds
 build
+client/client

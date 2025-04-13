@@ -125,7 +125,7 @@ endif
 
 
 build-linux:
-	g++ -std=c++11 source/main.cpp
+	g++ -std=c++11 source/main.cpp -o client
 
 test:
 	g++ source/lib/translator.test.cpp -o tests.out
