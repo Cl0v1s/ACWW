@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,24 +29,6 @@ jobs:
       - name: Build default target
         working-directory: client
         run: make
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: client-files
-          path: |
-            client/client.nds
-            client/client
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: client-files
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
