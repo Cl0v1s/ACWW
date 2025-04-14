@@ -63,6 +63,11 @@ A DS homebrew application that:
 A backend system that:
 - Processes requests from the client.
 - Generates villager responses using a language model (currently Mistral, with plans for a local CPU-based model).
+- Requires the following environment variables to function correctly:
+  - `GIN_MODE`: Specifies the mode in which the server operates (release).
+  - `PORT`: Defines the port on which the server listens for incoming connections.
+  - `API_KEY`: Contains a valid Mistral API key for accessing the `mistral-small-latest` model.
+
 
 ## References
 
@@ -74,5 +79,7 @@ A backend system that:
 
 1. **Set Up the Client**: Install the DS homebrew application on your device.
 2. **Configure the Client**: Create the `ac.config` file on the SD card with the required settings.
-3. **Run the Server**: Deploy the server locally or on a remote machine.
+3. **Run the Server**: Deploy the server locally or on a remote machine with the required settings.
 4. **Send Letters**: Write letters to villagers in-game
+
+![Bob dancing](http://vignette2.wikia.nocookie.net/animalcrossing/images/f/fb/Bobdance.gif/revision/latest?cb=20130922040310)
