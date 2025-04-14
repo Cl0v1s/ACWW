@@ -9,22 +9,9 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  create-release:
     runs-on: ubuntu-latest
-    container:
-      image: devkitpro/devkitarm:latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # - name: Build for Linux
-      #   working-directory: client
-      #   run: make build-linux
-
-      - name: Build default target
-        working-directory: client
-        run: make
-
       - name: Create Draft Release
         id: create_release
         uses: actions/create-release@v1
@@ -36,18 +23,59 @@ jobs:
           draft: true
           prerelease: false
 
-      - name: Upload Release Asset (Client)
+  build-client:
+    runs-on: ubuntu-latest
+    needs: create-release
+    container:
+      image: devkitpro/devkitarm:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Client
+        working-directory: client
+        run: make
+
+      - name: Upload Client Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: client/client.nds
           asset_name: client.nds
           asset_content_type: application/octet-stream
 
-      - uses: eregon/publish-release@v1
+  build-server:
+    runs-on: ubuntu-latest
+    needs: create-release
+    container:
+      image: golang:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Server
+        working-directory: server
+        run: make build
+
+      - name: Upload Server Asset
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          release_id: ${{ steps.create_release.outputs.id }}
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: server/server
+          asset_name: server
+          asset_content_type: application/octet-stream
+
+  publish-release:
+    runs-on: ubuntu-latest
+    needs: [build-client, build-server]
+    steps:
+      - name: Publish Release
+        uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ needs.create-release.outputs.id }}
