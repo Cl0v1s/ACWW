@@ -2,4 +2,4 @@ run:
 	go run src/*.go
 
 build:
-	go build -o server src/*.go
+	CGO_ENABLED=0 go build -o server src/*.go

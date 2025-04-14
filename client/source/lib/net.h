@@ -197,11 +197,14 @@ class Net {
                 }
             } while (!connected);
             #endif
-
             addr = (char*)malloc(sizeof(char) * strlen(_addr));
             memcpy(addr, _addr, sizeof(char) * strlen(_addr));
             port = _port;
             struct hostent * myhost = gethostbyname(_addr);
+            if(myhost == NULL) {
+                consolef("Unable to resolve %s.\n", _addr);
+                dsExit(1);
+            }
             remote.sin_family = AF_INET;
             remote.sin_port = htons(_port);
             remote.sin_addr.s_addr= *( (unsigned long *)(myhost->h_addr_list[0]) );
