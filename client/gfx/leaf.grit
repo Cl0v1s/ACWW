@@ -1,0 +1,7 @@
+# disable alpha and set opaque bit for all pixels
+-gT!
+
+# 16 bit bitmap
+-gB8
+
+-gb
