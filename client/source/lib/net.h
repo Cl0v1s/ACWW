@@ -76,15 +76,13 @@ int buildBody(char* dest, const char* language, const char* senderId, const char
 int buildRequest(char* dest, const char* addr, int port, const char* json) {
     return sprintf(dest,
         "GET /gen HTTP/1.0\r\n"
-        "Host: %s:%d\r\n"
-        "User-Agent: animal-crossing\r\n"
+        "Host: %s\r\n"
         "Connection: close\r\n"
-        "Accept: application/json\r\n"
         "Content-Length: %d\r\n"
         "Content-Type: application/json\r\n"
         "\r\n"
         "%s",
-        addr, port, strlen(json), json
+        addr, strlen(json), json
     );
 }
 
@@ -99,9 +97,9 @@ int emit(int soc, const char* addr, int port, const char* language, const char* 
     memcpy(request, raw, sizeof(char) * strlen(raw) + 1);
     free(raw);
 
-    // consolef("Sending:\n");
-    // consolef(request);
-    // consolef("\n");
+    consolef("Sending:\n");
+    consolef(request);
+    consolef("\n");
 
     int bytesSent;
 
@@ -197,8 +195,8 @@ class Net {
                 }
             } while (!connected);
             #endif
-            addr = (char*)malloc(sizeof(char) * strlen(_addr));
-            memcpy(addr, _addr, sizeof(char) * strlen(_addr));
+            addr = (char*)malloc(sizeof(char) * strlen(_addr) + 1);
+            memcpy(addr, _addr, sizeof(char) * strlen(_addr) + 1);
             port = _port;
             struct hostent * myhost = gethostbyname(_addr);
             if(myhost == NULL) {
