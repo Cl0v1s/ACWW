@@ -7,7 +7,7 @@ This project aims to enhance the gameplay experience of **Animal Crossing: Wild 
 ## Overview
 
 The system works as follows:
-1. The **client** reads the letters sent by the player from the game's memory.
+1. The **client** reads the letters sent by the player from the game's save memory.
 2. The **server** generates personalized responses based on the villager's personality and the content of the player's letter.
 3. The **client** injects the generated response into the game's memory, replacing the player's letter to prevent duplicate responses.
 
