@@ -13,12 +13,7 @@
 
 void initConsole() {
     #ifdef ARM9
-	videoSetMode(MODE_5_2D);
-	videoSetModeSub(MODE_0_2D); //sub bg 0 will be used to print text
-	vramSetBankA(VRAM_A_MAIN_BG);
 	consoleDemoInit();
-	// set up our bitmap background
-	bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0,0);
     #endif
 }
 
@@ -39,14 +34,19 @@ void consolef(const char* tmpl, ...) {
     va_end(args);
 }
 
+void waitForKey(int key) {
+    #ifdef ARM9
+        while(pmMainLoop()) {
+            int keys = keysDown();
+            if(keys & key) break;
+        }
+    #endif
+}
+
 void dsExit(int code) {
     #ifdef ARM9
         consolef("Press start to exit...\n");
-        while(pmMainLoop()) {
-            swiWaitForVBlank();
-            int keys = keysDown();
-            if(keys & KEY_START) break;
-        }
+        waitForKey(KEY_START);
     #endif
     exit(code);
 }

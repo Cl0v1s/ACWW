@@ -30,9 +30,9 @@ The system works as follows:
 
 ### Letter Format
 - Letters follow a specific structure, including headers, body, and footer. Key fields include:
-    - **Villager ID**: Identifies the sender or recipient.
-    - **Message Body**: Encoded as in-game characters.
-    - **Flags**: Control display options, such as showing the NPC's name in the inventory.
+  - **Villager ID**: Identifies the sender or recipient.
+  - **Message Body**: Encoded as in-game characters.
+  - **Flags**: Control display options, such as showing the NPC's name in the inventory.
 
 For more details, refer to the [ACWW-Web-SaveEditor Letter Format](https://github.com/Universal-Team/ACWW-Web-SaveEditor/blob/main/assets/js/core/letter.js).
 
@@ -55,6 +55,7 @@ A DS homebrew application that:
   <player's language>
   <path to save file on the sd card>
   ```
+- Requires an active internet connection to communicate with the server. This connection must be configured beforehand. If running on a 3DS, ensure that a DS connection is set up in the system settings for the homebrew to function properly.
 
 ### Server
 A backend system that:
