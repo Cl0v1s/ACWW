@@ -60,10 +60,11 @@ int getMailboxSlot(char* save, LetterMemory* region) {
 }
 
 // Please be sure to have room in your mailbox 
-void deliverLetters(char* save, Letter* letters, int length, LetterMemory* region, const char* lang) {
+int deliverLetters(char* save, Letter* letters, int length, LetterMemory* region, const char* lang) {
     bool done = false;
     int i = 0;
     LetterStruct* letterRegion = selectRegion(region);
+    int delivered = 0;
     while(done == false && i < length) {
         int slot = getMailboxSlot(save, region);
         if(slot >= region->MAIL_BOX_LENGTH) {
@@ -72,10 +73,14 @@ void deliverLetters(char* save, Letter* letters, int length, LetterMemory* regio
         } else { 
             int offset = region->MAIL_BOX + slot * letterRegion->LETTER_SIZE;
             Letter ans = factory.Answer(letters[i], save, offset, letterRegion, lang);
+            if(ans.Exists()) {
+                delivered += 1;
+            }
             // print(ans);
         }
         i += 1;
     }
+    return delivered;
 }
 
 #endif

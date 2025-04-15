@@ -37,7 +37,8 @@ int main() {
     // for(int i = 0; i < letterLength; i++) {
     //     print(letters[i]);
     // }
-    deliverLetters(saveData, letters, letterLength, region, config.lang.c_str());
+    int delivered = deliverLetters(saveData, letters, letterLength, region, config.lang.c_str());
+    consolef("%d letters got a reply !\n");
     checksum(saveData);
     if(!writeFile(config.path.c_str(), saveData)) {
         consolef("Unable to write save file\n");

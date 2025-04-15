@@ -29,7 +29,7 @@ class LetterFactory {
          */
         int GenerateContent(Content &content, Letter &letter, const char* lang) {
             char senderId[10]; 
-            sprintf(senderId, "%04x", letter.GetReceiverPlayerId());
+            sprintf(senderId, "%04x", letter.GetReceiverPlayerId() & 0xFF); // somehow it's actually on 8bits 
 
             std::string intro = letter.GetIntroPart();
             std::string body = letter.GetBodyPart();

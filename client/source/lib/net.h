@@ -97,9 +97,9 @@ int emit(int soc, const char* addr, int port, const char* language, const char* 
     memcpy(request, raw, sizeof(char) * strlen(raw) + 1);
     free(raw);
 
-    consolef("Sending:\n");
-    consolef(request);
-    consolef("\n");
+    // consolef("Sending:\n");
+    // consolef(request);
+    // consolef("\n");
 
     int bytesSent;
 
