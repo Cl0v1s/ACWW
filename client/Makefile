@@ -22,6 +22,7 @@ SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
 GFX := gfx
+ASM := asm
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -60,6 +61,7 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 
 export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 					$(foreach dir,$(DATA),$(CURDIR)/$(dir))\
+					$(foreach dir,$(ASM),$(CURDIR)/$(dir))\
 					$(foreach dir,$(GFX),$(CURDIR)/$(dir))
 
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
@@ -69,6 +71,7 @@ CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
 GFXFILES := $(foreach dir,$(GFX),$(notdir $(wildcard $(dir)/*.png)))
+ASMFILES := $(foreach dir,$(ASM),$(notdir $(wildcard $(dir)/*.s)))
 
 
 #---------------------------------------------------------------------------------
@@ -95,17 +98,31 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean
+.PHONY: $(BUILD) clean bootstub bootloader
 
 #---------------------------------------------------------------------------------
-$(BUILD):
+$(BUILD): 
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+
+data:
+	@mkdir -p data
+
+bootstub: data
+	@$(MAKE) -C bootstub
+
+bootloader: data
+	@$(MAKE) -C bootloader LOADBIN=$(CURDIR)/data/load.bin
+
+
 
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds
+	@$(MAKE) -C bootloader clean
+	@$(MAKE) -C bootstub clean
+
 
 #---------------------------------------------------------------------------------
 else
@@ -116,6 +133,8 @@ else
 $(OUTPUT).nds	: 	$(OUTPUT).elf
 $(OUTPUT).elf	:	$(OFILES)
 
+
+
 #---------------------------------------------------------------------------------
 %.s %.h	: %.png %.grit
 #---------------------------------------------------------------------------------
@@ -125,7 +144,7 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------
 %.bin.o	:	%.bin
 #---------------------------------------------------------------------------------
-	@echo $(notdir $<)
+	@echo bin2o $(notdir $<)
 	$(bin2o)
 	
 
