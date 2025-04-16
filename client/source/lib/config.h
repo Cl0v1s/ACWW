@@ -5,17 +5,38 @@
 
 #include "./files.h"
 
-#define CONFIG_FIELDS 4
+#define CONFIG_FIELDS 6
 
 typedef struct {
+    /**
+     * Remote server address
+     */
     std::string server;
+    /**
+     * Remote server port
+     */
     int port;
+    /**
+     * The language in which the villagers should response
+     */
     std::string lang;
-    std::string path;
+    /**
+     * Path to the AC:WW rom
+     */
+    std::string rom;
+    /**
+     * Path to the AC:WW save
+     */
+    std::string save;
+    /**
+     * True if we should start AC:WW with nds-bootloader when the save edit is done
+     * This require nds-bootloader to be installed at the root of your SD card, in the _nds folder as stated in their documentation
+     */
+    bool launcher;
 } Config;
 
 void printConfig(const Config &config) {
-    consolef("config: %s:%d %s %s\n", config.server.c_str(), config.port, config.lang.c_str(), config.path.c_str());
+    consolef("config:\nserver = %s:%d\nlang = %s\nrom = %s\nsave = %s\nlauncher = %d\n", config.server.c_str(), config.port, config.lang.c_str(), config.rom.c_str(), config.save.c_str(), config.launcher);
 }
 
 Config loadConfig() {
@@ -45,7 +66,9 @@ Config loadConfig() {
     config.server = parts[0];
     config.port = (int)strtoll(parts[1].c_str(), NULL, 10);
     config.lang = parts[2];
-    config.path = parts[3];
+    config.rom = parts[3];
+    config.save = parts[4];
+    config.launcher = parts[5].compare("true") == 0;
 
     return config;
 }

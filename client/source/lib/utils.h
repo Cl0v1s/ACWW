@@ -4,11 +4,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
 #ifdef ARM9
 
 #include <nds.h>
-#include "../nds_loader_arm9.h"
 #include "leaf.h"
+
+#else 
+
+#include <cstdarg>
 
 #endif
 
@@ -51,16 +55,6 @@ void waitForKey(int key) {
             if(keys & key) break;
         }
         consolef("OK\n");
-    #endif
-}
-
-void dsStartWW() {
-    #ifdef ARM9
-    int argc = 1;
-    const char* argv[2];
-    argv[0] = "_nds/nds-bootstrap.nds";
-    argv[1] = "fat:/_nds/nds-bootstrap.nds";
-    runNdsFile(argv[0], argc, argv + 1);
     #endif
 }
 
