@@ -1,7 +1,9 @@
 *.out
 *.elf
 *.nds
+*.sys
 build
 client/client
 server/server
 ac.config
+client/_nds/nds-bootstrap
