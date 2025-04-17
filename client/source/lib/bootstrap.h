@@ -13,7 +13,7 @@
 #include "config.h"
 
 #define BOOTSTRAP_NAMES_LENGTH 6
-const char* BOOTSTRAP_ROOT = "sd:/_nds/";
+const char* BOOTSTRAP_ROOT = "fat:/_nds/";
 
 const int getNDSBootstrapPath(char* name) {
     const char* NDS_NAMES[BOOTSTRAP_NAMES_LENGTH];
