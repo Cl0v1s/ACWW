@@ -12,28 +12,30 @@ endif
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
+UNIVERSAL	:=	../
 TARGET		:=	load
 BUILD		?=	build
-SOURCES		:=	source source/patches 
-INCLUDES	:=	build
+SOURCES		:=	source source/patches $(UNIVERSAL)/source/tonccpy
+INCLUDES	:=	build $(UNIVERSAL)/include
 SPECS		:=  specs
  
-
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-mthumb -mthumb-interwork -march=armv4t -mtune=arm7tdmi
+ARCH	:=	-mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -Os \
-			-ffunction-sections -fdata-sections \
+CFLAGS	:=	-g -Wall -O2\
+			-mcpu=arm7tdmi -mtune=arm7tdmi -fomit-frame-pointer\
+			-ffast-math \
+			-flto \
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) $(EXTRA_CFLAGS) -DARM7
 
-ASFLAGS	:=	-g $(ARCH) $(EXTRA_CFLAGS) $(INCLUDE)
-LDFLAGS	=	-nostartfiles -T $(TOPDIR)/load.ld -Wl,--no-warn-rwx-segments,--nmagic,--gc-sections -g $(ARCH) -Wl,-Map,$(TARGET).map
+ASFLAGS	:=	-g $(ARCH) -flto $(EXTRA_CFLAGS) $(INCLUDE)
+LDFLAGS	=	-nostartfiles -T $(TOPDIR)/load.ld -g $(ARCH) -Wl,-Map,$(TARGET).map
 
-LIBS	:= -lnds7 -lcalico_ds7
+LIBS	:=
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

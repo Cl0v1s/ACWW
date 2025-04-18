@@ -24,11 +24,17 @@
 	.section ".init"
 	.global _start
 	.global storedFileCluster
+	.global initDisc
 	.global wantToPatchDLDI
 	.global argStart
 	.global argSize
 	.global dsiSD
 	.global dsiMode
+	.global clearMasterBright
+	.global dsMode
+	.global loadFromRam
+	.global language
+	.global tscTgds
 @---------------------------------------------------------------------------------
 	.align	4
 	.arm
@@ -38,7 +44,9 @@ _start:
 	b	startUp
 
 storedFileCluster:
-	.word	0				@ default BOOT.NDS
+	.word	0x0FFFFFFF		@ default BOOT.NDS
+initDisc:
+	.word	0x00000001		@ init the disc by default
 wantToPatchDLDI:
 	.word	0x00000001		@ by default patch the DLDI section of the loaded NDS
 @ Used for passing arguments to the loaded app
@@ -51,6 +59,16 @@ dldiOffset:
 dsiSD:
 	.word	0
 dsiMode:
+	.word	0
+clearMasterBright:
+	.word	0
+dsMode:
+	.word	0
+loadFromRam:
+	.word	0
+language:
+	.word	0
+tscTgds:
 	.word	0
 
 startUp:

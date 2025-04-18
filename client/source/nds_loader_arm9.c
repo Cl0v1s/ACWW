@@ -20,6 +20,7 @@
 ------------------------------------------------------------------*/
 #include <string.h>
 #include <nds.h>
+#include <nds/memory.h>
 #include <nds/arm9/dldi.h>
 #include <calico/arm/common.h>
 #include <calico/nds/env.h>
@@ -32,10 +33,6 @@
 #include <unistd.h>
 
 #include "load_bin.h"
-
-#ifndef _NO_BOOTSTUB_
-#include "bootstub_bin.h"
-#endif
 
 #include "nds_loader_arm9.h"
 
@@ -161,9 +158,10 @@ static eRunNdsRetCode runNds (const void* loader, u32 loaderSize, u32 cluster, i
 	g_envAppNdsHeader->arm7_entrypoint = 0x06000000;
 	g_envAppTwlHeader->arm7_mbk_map_settings[0] = mbkMakeMapping(MM_TWLWRAM_MAP, MM_TWLWRAM_MAP+MM_TWLWRAM_BANK_SZ, MbkMapSize_256K);
 	g_envExtraInfo->pm_chainload_flag = 1;
-
 	exit(0);
 }
+
+
 
 eRunNdsRetCode runNdsFile (const char* filename, int argc, const char** argv)  {
 	struct stat st;
@@ -186,44 +184,5 @@ eRunNdsRetCode runNdsFile (const char* filename, int argc, const char** argv)  {
 		argv = args;
 	}
 
-	bool havedsiSD = false;
-
-	if(argv[0][0]=='s' && argv[0][1]=='d') havedsiSD = true;
-
-
-	installBootStub(havedsiSD);
-
-
 	return runNds (load_bin, load_bin_size, st.st_ino, argc, argv);
-}
-
-bool installBootStub(bool havedsiSD) {
-#ifndef _NO_BOOTSTUB_
-	void* bootstub = g_envNdsBootstub;
-	BootLdrHeader *bootloader = (BootLdrHeader*)((u8*)bootstub+bootstub_bin_size);
-
-	armCopyMem32(bootstub,bootstub_bin,bootstub_bin_size);
-	armCopyMem32(bootloader,load_bin,load_bin_size);
-	bool ret = false;
-
-	bootloader->isTwlMode = systemIsTwlMode();
-	if( havedsiSD) {
-		ret = true;
-		bootloader->wantToPatchDldi = 0;
-		bootloader->hasTwlSd = 1;
-	} else {
-		ret = dldiPatchLoader(bootloader);
-	}
-
-	g_envNdsBootstub->arm9_entrypoint = (void*)((u32)bootstub+(u32)g_envNdsBootstub->arm9_entrypoint);
-	g_envNdsBootstub->arm7_entrypoint = (void*)((u32)bootstub+(u32)g_envNdsBootstub->arm7_entrypoint);
-	*(u32*)(g_envNdsBootstub+1) = load_bin_size;
-
-	DC_FlushAll();
-
-	return ret;
-#else
-	return true;
-#endif
-
 }

@@ -70,7 +70,14 @@ void dsStartWW(const Config &config) {
     int argc = 1;
     const char* argv[1];
     argv[0] = bootstrapPath;
-    runNdsFile(bootstrapPath, argc, argv);
+    int ret = runNdsFile(bootstrapPath, argc, argv);
+    if(ret == 1) {
+        consolef("Unable to load ROM.\nPlease check your config file.\n");
+    } else if(ret == 2) {
+        consolef("Unable to build command line args.\n");
+    } else if(ret == 3) {
+        consolef("Unable to patch dldi.\n");
+    }
     #endif
 }
 

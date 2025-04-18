@@ -98,7 +98,7 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean bootstub bootloader
+.PHONY: $(BUILD) clean bootloader
 
 #---------------------------------------------------------------------------------
 $(BUILD): 
@@ -107,9 +107,6 @@ $(BUILD):
 
 data:
 	@mkdir -p data
-
-bootstub: data
-	@$(MAKE) -C bootstub
 
 bootloader: data
 	@$(MAKE) -C bootloader LOADBIN=$(CURDIR)/data/load.bin
@@ -121,7 +118,6 @@ clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds
 	@$(MAKE) -C bootloader clean
-	@$(MAKE) -C bootstub clean
 
 
 #---------------------------------------------------------------------------------

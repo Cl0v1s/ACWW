@@ -183,17 +183,12 @@ class Net {
     public:
         Net(const char* _addr, int _port) {
             #ifdef ARM9
-            bool connected;    
-            do {
-                connected = Wifi_InitDefault(WFC_CONNECT);
-                if(!connected) {
-                    consolef("Unable to start wifi.\n");
-                    consolef("Please check your internet switch and ensure that you configured\n");
-                    consolef("a connection (DS connection if running on a 3DS)\n");
-                    consolef("Press start to retry.\n");
-                    waitForKey(KEY_START);
-                }
-            } while (!connected);
+            if(!Wifi_InitDefault(WFC_CONNECT)) {
+                consolef("Unable to start wifi.\n");
+                consolef("Please check your internet switch and ensure that you configured\n");
+                consolef("a connection (DS connection if running on a 3DS)\n");
+                dsExit(1);
+            }
             #endif
             addr = (char*)malloc(sizeof(char) * strlen(_addr) + 1);
             memcpy(addr, _addr, sizeof(char) * strlen(_addr) + 1);
