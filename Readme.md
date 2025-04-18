@@ -52,10 +52,14 @@ A DS homebrew application that:
 - Communicates with the server to fetch generated responses.
 - Requires configuration via a file named `ac.config` located alongside the homebrew on the DS's SD card. The file must be formatted as follows:
   ```
-  <ip server address>
-  <server port>
-  <player's language>
-  <path to save file on the sd card>
+  <server>        # Remote server address
+  <port>          # Remote server port
+  <lang>          # Language for villager responses (e.g., en, fr, jp)
+  <launcher>      # true/false - Launch AC:WW with nds-bootstrap after editing (only available on NDS)
+  <bootstrapNDS>  # Path to nds-bootstrap executable (only available on NDS)
+  <bootstrapINI>  # Path to nds-bootstrap configuration file (only available on NDS)
+  <rom>           # Path to the AC:WW ROM file
+  <save>          # Path to the AC:WW save file
   ```
 - Requires an active internet connection to communicate with the server. This connection must be configured beforehand. If running on a 3DS, ensure that a DS connection is set up in the system settings for the homebrew to function properly.
 
