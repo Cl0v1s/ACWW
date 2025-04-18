@@ -51,7 +51,7 @@ int main() {
         consolef("Starting the game...\n");
         waitForKey(KEY_START);
         dsStartWW(config);
-        return 0;
+        dsExit(0);
     } 
     #endif
     dsExit(0);
