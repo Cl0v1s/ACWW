@@ -60,6 +60,7 @@ A DS homebrew application that:
   <bootstrapINI>  # Path to nds-bootstrap configuration file (only available on NDS)
   <rom>           # Path to the AC:WW ROM file
   <save>          # Path to the AC:WW save file
+  <empty line >   # The file must end with an empty line
   ```
 - Requires an active internet connection to communicate with the server. This connection must be configured beforehand. If running on a 3DS, ensure that a DS connection is set up in the system settings for the homebrew to function properly.
 
