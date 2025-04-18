@@ -1,12 +1,12 @@
 
 #define DEBUG false
 
-#include "lib/files.h"
+#include "../../common/files.h"
 #include "lib/letter.h"
 #include "lib/postman.h"
-#include "lib/utils.h"
+#include "../../common/utils.h"
 #include "lib/net.h"
-#include "lib/config.h"
+#include "../../common/config.h"
 #include "lib/bootstrap.h"
 
 #include <string>

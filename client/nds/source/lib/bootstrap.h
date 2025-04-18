@@ -10,7 +10,7 @@
 
 #endif
 
-#include "config.h"
+#include "../../../common/config.h"
 
 void setNDSBootstrapIni(const Config &config) {
     #ifdef ARM9

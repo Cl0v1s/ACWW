@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "./files.h"
+#include "files.h"
 
 #define CONFIG_FIELDS 8
 
@@ -49,8 +49,9 @@ void printConfig(const Config &config) {
 
 Config loadConfig() {
     Config config;
-    char* ccontent;
-    if(!readFile("./ac.txt", &ccontent)) {
+    int length = 1024;
+    char ccontent[length];
+    if(!readFile("./ac.txt", ccontent, length)) {
         consolef("Unable to load config file, please create and setup your configuration.\n");
         dsExit(1);
     }

@@ -136,6 +136,7 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 export _3DSXDEPS	:=	$(if $(NO_SMDH),,$(OUTPUT).smdh)
+# export _3DSXDEPS := 
 
 ifeq ($(strip $(ICON)),)
 	icons := $(wildcard *.png)
