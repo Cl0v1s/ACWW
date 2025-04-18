@@ -5,7 +5,7 @@
 
 #include "./files.h"
 
-#define CONFIG_FIELDS 6
+#define CONFIG_FIELDS 8
 
 typedef struct {
     /**
@@ -21,6 +21,19 @@ typedef struct {
      */
     std::string lang;
     /**
+     * True if we should start AC:WW with nds-bootloader when the save edit is done
+     * This require nds-bootloader to be installed at the root of your SD card, in the _nds folder as stated in their documentation
+     */
+    bool launcher;
+    /**
+     * Path to nds-bootstrap (retail)
+     */
+    std::string bootstrapNDS;
+    /**
+     * Path to nds-bootstrap ini file
+     */
+    std::string bootstrapINI;
+    /**
      * Path to the AC:WW rom
      */
     std::string rom;
@@ -28,11 +41,6 @@ typedef struct {
      * Path to the AC:WW save
      */
     std::string save;
-    /**
-     * True if we should start AC:WW with nds-bootloader when the save edit is done
-     * This require nds-bootloader to be installed at the root of your SD card, in the _nds folder as stated in their documentation
-     */
-    bool launcher;
 } Config;
 
 void printConfig(const Config &config) {
@@ -42,7 +50,7 @@ void printConfig(const Config &config) {
 Config loadConfig() {
     Config config;
     char* ccontent;
-    if(!readFile("./ac.config", &ccontent)) {
+    if(!readFile("./ac.txt", &ccontent)) {
         consolef("Unable to load config file, please create and setup your configuration.\n");
         dsExit(1);
     }
@@ -66,9 +74,11 @@ Config loadConfig() {
     config.server = parts[0];
     config.port = (int)strtoll(parts[1].c_str(), NULL, 10);
     config.lang = parts[2];
-    config.rom = parts[3];
-    config.save = parts[4];
-    config.launcher = parts[5].compare("true") == 0;
+    config.launcher = parts[3].compare("true") == 0;
+    config.bootstrapNDS = parts[4];
+    config.bootstrapINI = parts[5];
+    config.rom = parts[6];
+    config.save = parts[7];
 
     return config;
 }
