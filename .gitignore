@@ -8,4 +8,4 @@ build
 client/client
 server/server
 ac.config
-client/_nds/nds-bootstrap
+client/nds/_nds/nds-bootstrap

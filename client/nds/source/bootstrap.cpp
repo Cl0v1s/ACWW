@@ -1,8 +1,9 @@
-#include "../../../common/bootstrap.h"
+#include "../../common/bootstrap.h"
 
 #include <nds.h>
+#include <vector>
 #include <sys/stat.h>
-#include "../nds_loader_arm9.h"
+#include "./nds_loader_arm9.h"
 
 
 void setNDSBootstrapIni(const Config &config) {

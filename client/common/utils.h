@@ -3,7 +3,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <cstdarg>
 
 
 #if defined(ARM9) 
@@ -13,6 +12,11 @@
 #elif defined(__3DS__)
 
 #include <3ds.h>
+#include <cstdarg>
+
+#else 
+
+#include <cstdarg>
 
 #endif
 

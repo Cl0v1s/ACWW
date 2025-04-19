@@ -2,31 +2,34 @@
 #define DEBUG false
 
 #include "../../common/files.h"
-#include "lib/letter.h"
-#include "lib/postman.h"
+#include "../../common/letter.h"
+#include "../../common/postman.h"
 #include "../../common/utils.h"
 #include "../../common/net.h"
 #include "../../common/config.h"
-#include "lib/bootstrap.h"
+#include "../../common/bootstrap.h"
 
 #include <string>
+
+#define SAVE_LENGTH 0x3FFFF
 
 
 int main() {
     initFiles();
     initConsole();
-    char* saveData;
-    Config config = loadConfig();
+    // We need to put that data on stack, it doesnt work on rom
+    char* saveData = (char*)malloc(sizeof(char) * SAVE_LENGTH);
+    Config config = loadConfig("./ac.txt");
     printConfig(config);
     initNet(config.server.c_str(), config.port);
 
-    if(!readFile(config.save.c_str(), &saveData)) {
+    if(!readFile(config.save.c_str(), saveData, SAVE_LENGTH)) {
         consolef("Unable to load save file\n");
         dsExit(1);
     }
 
     std::string backup = config.save + ".bak";
-    if(!writeFile(backup.c_str(), saveData)) {
+    if(!writeFile(backup.c_str(), saveData, SAVE_LENGTH)) {
         consolef("Unable to write backup file\n");
         dsExit(1);
     }
@@ -41,7 +44,7 @@ int main() {
     int delivered = deliverLetters(saveData, letters, letterLength, region, config.lang.c_str());
     consolef("%d letters got a reply !\n", delivered);
     checksum(saveData);
-    if(!writeFile(config.save.c_str(), saveData)) {
+    if(!writeFile(config.save.c_str(), saveData, SAVE_LENGTH)) {
         consolef("Unable to write save file\n");
         dsExit(1);
     }

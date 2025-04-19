@@ -7,10 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-void initNet(const char* server, int port) {
-    consolef("Starting networking...\n");
-    net = new NetNDS(server, port);
-}
+Net* net;
 
 class NetNDS: public Net {
     private:
@@ -71,3 +68,16 @@ class NetNDS: public Net {
             return anwser;
         }
 };
+
+void initNet(const char* server, int port) {
+    consolef("Starting networking...\n");
+    net = new NetNDS(server, port);
+}
+
+Net* getNet() {
+    return net;
+}
+
+void closeNet() {
+    delete net;
+}
