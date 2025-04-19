@@ -314,7 +314,7 @@ class Letter {
         }
 };
 
-void print(Letter &letter) {
+static inline void print(Letter &letter) {
     consolef("Sender PlayerId: %04x\n", letter.GetSenderPlayerId());
     consolef("Sender TownID: %04x\n", letter.GetSenderTownId());
     consolef("Sender Player: %s\n", letter.GetSenderPlayerName().c_str());

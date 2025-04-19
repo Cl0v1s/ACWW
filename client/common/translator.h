@@ -4,8 +4,6 @@
 #include <string>
 #include <wchar.h>
 
-#include "../vendor/catch.hpp"
-
 const wchar_t wwCharacterDictionary[] = {
     L'\0', L'A', L'B', L'C', L'D', L'E', L'F', L'G', L'H', L'I', L'J', L'K', L'L', L'M', L'N', L'O',
     L'P', L'Q', L'R', L'S', L'T', L'U', L'V', L'W', L'X', L'Y', L'Z', L'a', L'b', L'c', L'd', L'e',
@@ -44,11 +42,11 @@ const wchar_t wwCharacterDictionaryJapanese[] = {
     L'>', L'\'', L'\"', L'_', L'+', L'=', L'&', L'@', L':', L';', L'×', L'÷', L'☔', L'★', L'♥', L'♪'
 };
 
-wchar_t decodeChar(unsigned char input, bool jpn) {
+static inline wchar_t decodeChar(unsigned char input, bool jpn) {
     return jpn ? wwCharacterDictionaryJapanese[input] : wwCharacterDictionary[input];
 }
 
-unsigned char encodeChar(wchar_t input, bool jpn) {
+static inline unsigned char encodeChar(wchar_t input, bool jpn) {
     const wchar_t* table = wwCharacterDictionary;
     size_t size = sizeof(wwCharacterDictionary);
     if(jpn) {
@@ -77,7 +75,7 @@ unsigned char encodeChar(wchar_t input, bool jpn) {
 }
 
 
-std::string decode(const std::string& input, bool jpn, bool kor) {
+static inline std::string decode(const std::string& input, bool jpn, bool kor) {
     if(kor) {
         consolef("We do not support korea for now.\n");
         dsExit(1);
@@ -92,7 +90,7 @@ std::string decode(const std::string& input, bool jpn, bool kor) {
 }
 
 
-std::string encode(const std::string& input, bool jpn, bool kor) {
+static inline std::string encode(const std::string& input, bool jpn, bool kor) {
     if(kor) {
         consolef("We do not support korea for now.\n");
         dsExit(1);

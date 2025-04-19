@@ -1,6 +1,7 @@
 *.out
 *.elf
 *.nds
+*.3dsx
 *.sys
 build
 client/client

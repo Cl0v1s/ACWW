@@ -5,7 +5,7 @@
 #include "lib/letter.h"
 #include "lib/postman.h"
 #include "../../common/utils.h"
-#include "lib/net.h"
+#include "../../common/net.h"
 #include "../../common/config.h"
 #include "lib/bootstrap.h"
 

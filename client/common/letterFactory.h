@@ -35,7 +35,7 @@ class LetterFactory {
             std::string body = letter.GetBodyPart();
             std::string end = letter.GetEndPart();
 
-            std::string reply = net->call(lang, senderId, letter.GetSenderPlayerName().c_str(), letter.GetReceiverTownName().c_str(), letter.GetAttachementId(), 100, intro, body, end);
+            std::string reply = getNet()->call(lang, senderId, letter.GetSenderPlayerName().c_str(), letter.GetReceiverTownName().c_str(), letter.GetAttachementId(), 100, intro, body, end);
             if(reply.length() == 0) {
                 return - 1;
             }

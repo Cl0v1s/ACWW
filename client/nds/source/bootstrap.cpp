@@ -1,16 +1,9 @@
-#ifndef BOOTSTRAP_H
-#define BOOTSTRAP_H
-
-#include <sys/stat.h>
-
-#ifdef ARM9
+#include "../../../common/bootstrap.h"
 
 #include <nds.h>
+#include <sys/stat.h>
 #include "../nds_loader_arm9.h"
 
-#endif
-
-#include "../../../common/config.h"
 
 void setNDSBootstrapIni(const Config &config) {
     #ifdef ARM9
@@ -57,7 +50,6 @@ void setNDSBootstrapIni(const Config &config) {
 }
 
 void dsStartWW(const Config &config) {
-    #ifdef ARM9
     const char* bootstrapPath = config.bootstrapNDS.c_str();
     struct stat info;
     if (stat(bootstrapPath, &info) != 0)
@@ -78,8 +70,4 @@ void dsStartWW(const Config &config) {
     } else if(ret == 3) {
         consolef("Unable to patch dldi.\n");
     }
-    #endif
 }
-
-
-#endif

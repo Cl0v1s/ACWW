@@ -1,26 +1,21 @@
 #ifndef NET_H
 #define NET_H
 
+#include "./utils.h"
+
 #include <stdint.h>
 #include <string.h>
 #include <string>
 #include <errno.h>
 #include <unistd.h>
 
-#ifndef ARM9
-
-#include <sys/socket.h>
-#include <netinet/in.h> 
-#include <arpa/inet.h>
-#include <netdb.h>
-
-#else 
+#if defined(ARM9) 
 
 #include <nds.h>
-#include <dswifi9.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
+
+#elif defined(__3DS)
+
+#include <3ds.h>
 
 #endif
 
@@ -28,9 +23,19 @@
 #define INVALID_STATUS 2
 #define INVALID_BODY 3
 
+class Net {
+    public:
+        virtual std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) = 0;
+        virtual ~Net() {};
+};
 
+void initNet(const char* server, int port);
 
-std::string jsonEscape(const std::string &input) {
+Net* getNet();
+
+void closeNet();
+
+static inline std::string jsonEscape(const std::string &input) {
     std::string output;
     for (char c : input) {
         switch (c) {
@@ -50,7 +55,7 @@ std::string jsonEscape(const std::string &input) {
     return output;
 }
 
-int buildBody(char* dest, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) {
+static inline int buildBody(char* dest, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) {
 
     intro = jsonEscape(intro);
     body = jsonEscape(body);
@@ -73,7 +78,7 @@ int buildBody(char* dest, const char* language, const char* senderId, const char
 }
 
 
-int buildRequest(char* dest, const char* addr, int port, const char* json) {
+static inline int buildRequest(char* dest, const char* addr, int port, const char* json) {
     return sprintf(dest,
         "GET /gen HTTP/1.0\r\n"
         "Host: %s\r\n"
@@ -86,7 +91,7 @@ int buildRequest(char* dest, const char* addr, int port, const char* json) {
     );
 }
 
-int emit(int soc, const char* addr, int port, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) {
+static inline int emit(int soc, const char* addr, int port, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) {
     char* raw = (char*)malloc(sizeof(char) * 1000); // big size to be sure to store everything
     buildBody(raw, language, senderId, receiverName, townName, attachementId, score, intro, body, end);
     char* json = (char*)malloc(sizeof(char) * strlen(raw) + 1); // +1 to keep the \0
@@ -119,17 +124,10 @@ int emit(int soc, const char* addr, int port, const char* language, const char* 
     return 0;
 }
 
-int receive(int soc, std::string &answer) {
+static inline int receive(int soc, std::string &answer) {
     char buffer[1024];
     int bytesRead;
     std::string response;
-
-    // consolef("Waiting for server response...\n");
-    // Set a timeout for the socket
-    struct timeval timeout;
-    timeout.tv_sec = 10; // 10 seconds
-    timeout.tv_usec = 0;
-    setsockopt(soc, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
 
     // Read the response from the server
     while ((bytesRead = recv(soc, buffer, sizeof(buffer) - 1, 0)) > 0) {
@@ -175,73 +173,6 @@ int receive(int soc, std::string &answer) {
     return 0;
 }
 
-class Net {
-    private:
-        sockaddr_in remote;
-        char* addr;
-        int port;
-    public:
-        Net(const char* _addr, int _port) {
-            #ifdef ARM9
-            if(!Wifi_InitDefault(WFC_CONNECT)) {
-                consolef("Unable to start wifi.\n");
-                consolef("Please check your internet switch and ensure that you configured\n");
-                consolef("a connection (DS connection if running on a 3DS)\n");
-                dsExit(1);
-            }
-            #endif
-            addr = (char*)malloc(sizeof(char) * strlen(_addr) + 1);
-            memcpy(addr, _addr, sizeof(char) * strlen(_addr) + 1);
-            port = _port;
-            struct hostent * myhost = gethostbyname(_addr);
-            if(myhost == NULL) {
-                consolef("Unable to resolve %s.\n", _addr);
-                dsExit(1);
-            }
-            remote.sin_family = AF_INET;
-            remote.sin_port = htons(_port);
-            remote.sin_addr.s_addr= *( (unsigned long *)(myhost->h_addr_list[0]) );
-        }
 
-        ~Net() {
-            free(addr);
-        }
-
-        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) {
-            int soc = socket(AF_INET, SOCK_STREAM, 0);
-            int result = connect(soc, (struct sockaddr *)&this->remote, sizeof(this->remote));
-            if(result != 0) {
-                consolef("%d: unable to connect to %s\n%s\n", errno, addr, strerror(errno) );
-                return std::string("");
-            }
-            result = emit(soc, addr, port, language, senderId, receiverName, townName, attachementId, score, intro, body, end);
-            if(result != 0) {
-                consolef("%d: unable to send data\n%s\n", errno, strerror(errno) );
-                return std::string("");
-            }
-            
-            std::string anwser("");
-            result = receive(soc, anwser);
-            if(result != 0) {
-                consolef("%d: unable to receive data\n%s\n", errno, anwser.c_str());
-                return std::string("");
-            }
-
-            shutdown(soc, SHUT_RDWR);
-            #ifndef ARM9
-                close(soc);
-            #else 
-                closesocket(soc);
-            #endif
-            return anwser;
-        }
-};
-
-Net* net;
-
-void initNet(const char* server, int port) {
-    consolef("Starting networking...\n");
-    net = new Net(server, port);
-}
 
 #endif 

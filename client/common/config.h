@@ -43,15 +43,15 @@ typedef struct {
     std::string save;
 } Config;
 
-void printConfig(const Config &config) {
+static inline void printConfig(const Config &config) {
     consolef("config:\nserver = %s:%d\nlang = %s\nrom = %s\nsave = %s\nlauncher = %d\n", config.server.c_str(), config.port, config.lang.c_str(), config.rom.c_str(), config.save.c_str(), config.launcher);
 }
 
-Config loadConfig() {
+static inline Config loadConfig(const char* path) {
     Config config;
     int length = 1024;
     char ccontent[length];
-    if(!readFile("./ac.txt", ccontent, length)) {
+    if(!readFile(path, ccontent, length)) {
         consolef("Unable to load config file, please create and setup your configuration.\n");
         dsExit(1);
     }

@@ -25,7 +25,7 @@ LetterMemory LETTER_MEMORY_EUR_USA = {
 
 LetterFactory factory;
 
-LetterStruct* selectRegion(LetterMemory* region) {
+static inline LetterStruct* selectRegion(LetterMemory* region) {
     if(region == &LETTER_MEMORY_EUR_USA) {
         return &LETTER_EUR_USA;
     }
@@ -34,7 +34,7 @@ LetterStruct* selectRegion(LetterMemory* region) {
     return 0;
 }
 
-int loadLetters(char* save, int addr, int size,  Letter* letters, LetterStruct* region, bool dryRun = false) {
+static inline int loadLetters(char* save, int addr, int size,  Letter* letters, LetterStruct* region, bool dryRun = false) {
     int i = 0;
     bool done = false;
     while (done == false && i < size) {
@@ -50,17 +50,17 @@ int loadLetters(char* save, int addr, int size,  Letter* letters, LetterStruct* 
     return i;
 }
 
-int gatherLetter(char* save, Letter* letters, LetterMemory* region) {
+static inline int gatherLetter(char* save, Letter* letters, LetterMemory* region) {
 
     return loadLetters(save, region->POST_BOX, region->POST_BOX_LENGTH, letters, selectRegion(region));
 }
 
-int getMailboxSlot(char* save, LetterMemory* region) {
+static inline int getMailboxSlot(char* save, LetterMemory* region) {
     return loadLetters(save, region->MAIL_BOX, region->MAIL_BOX_LENGTH, NULL, selectRegion(region), true);
 }
 
 // Please be sure to have room in your mailbox 
-int deliverLetters(char* save, Letter* letters, int length, LetterMemory* region, const char* lang) {
+static inline int deliverLetters(char* save, Letter* letters, int length, LetterMemory* region, const char* lang) {
     bool done = false;
     int i = 0;
     LetterStruct* letterRegion = selectRegion(region);
