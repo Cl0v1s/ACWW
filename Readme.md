@@ -56,9 +56,9 @@ A DS homebrew application that:
   <port>          # Remote server port
   <lang>          # Language for villager responses (e.g., en, fr, jp)
   <launcher>      # true/false - Launch AC:WW with nds-bootstrap after editing (only available on NDS)
-  <bootstrapNDS>  # Path to nds-bootstrap executable (only available on NDS)
-  <bootstrapINI>  # Path to nds-bootstrap configuration file (only available on NDS)
-  <rom>           # Path to the AC:WW ROM file
+  <bootstrapNDS>  # Path to nds-bootstrap executable (only available on NDS), set to empty line on 3ds
+  <bootstrapINI>  # Path to nds-bootstrap configuration file (only available on NDS), set to empty line on 3ds
+  <rom>           # On nds: Path to the AC:WW ROM file on nds / On 3ds: Title id of AC:WW
   <save>          # Path to the AC:WW save file
   <empty line >   # The file must end with an empty line
   ```
