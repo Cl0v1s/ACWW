@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"unicode/utf8"
 
@@ -9,26 +10,22 @@ import (
 	"golang.org/x/text/encoding/charmap"
 )
 
-func buildPrompt(language string, score int, receiverName string, senderDescription string, townName string, content string) string {
+func buildPrompt(language string, score int, receiverName string, senderDescription string, townName string, attachmentName string, content string) (string, error) {
 	var tone string
-	if score > 50 {
-		tone = "nice or positive"
+	if score > 80 {
+		tone = "very happy"
+	} else if score > 50 {
+		tone = ""
 	} else {
 		tone = "confused or negative"
 	}
 
-	return fmt.Sprintf(`
-		As a villager residing in the town of %s in Animal Crossing, you are known for the following traits:
-		%s
+	promptTemplate, err := os.ReadFile("prompt.txt")
+	if err != nil {
+		return "", err
+	}
 
-		You have received a letter from %s, another villager, which reads:
-		%s 
-
-		Compose a %s reply in %s to this letter. Only answer with the letter. Use the following structure:
-		- Greetings,<line break>
-		- Body adhering to a 100-character limit<line break>
-		- Closing
-	`, townName, senderDescription, receiverName, content, tone, language)
+	return fmt.Sprintf(string(promptTemplate), townName, senderDescription, receiverName, attachmentName, content, tone, language), nil
 }
 
 type GenRequest struct {
@@ -36,7 +33,7 @@ type GenRequest struct {
 	SenderId     string `json:"senderId"`     // villager id 002d
 	ReceiverName string `json:"receiverName"` // receiver (player?) name
 	TownName     string `json:"townName"`     // town name
-	AttachmentId int16  `json:"attachmentId"` // id of the attached gift
+	AttachmentId uint16 `json:"attachmentId"` // id of the attached gift
 	Score        int    `json:"score"`        // < 50 -> negative or confused reply
 	Intro        string `json:"intro"`        // previous letter from the receiver
 	Body         string `json:"body"`         // previous letter from the receiver
@@ -65,9 +62,20 @@ func gen(c *gin.Context) {
 		return
 	}
 
-	prompt := buildPrompt(request.Language, request.Score, request.ReceiverName, *senderDescription, request.TownName, request.Intro+"\n"+request.Body+"\n"+request.End)
+	attachmentName := "Package"
+	if request.AttachmentId == 0xf1ff {
+		attachmentName = "No package"
+	}
+
+	prompt, err := buildPrompt(request.Language, request.Score, request.ReceiverName, *senderDescription, request.TownName, attachmentName, request.Intro+"\n"+request.Body+"\n"+request.End)
+	if err != nil {
+		fmt.Println(err)
+		c.String(500, err.Error())
+		return
+	}
 	fmt.Println(prompt)
 	response, err := Call(prompt)
+	fmt.Println(response)
 	if err != nil {
 		fmt.Println(err)
 		c.String(500, err.Error())
@@ -77,10 +85,23 @@ func gen(c *gin.Context) {
 		// we cant trust llms regarding response length
 		parts := strings.Split(reply, "\n\n")
 		body := parts[1]
-		for utf8.RuneCountInString(body) > 100 {
-			bodyparts := strings.Split(body, ".")
+		var punctuation []rune
+		for _, r := range body {
+			if r == '.' || r == '?' || r == '!' {
+				punctuation = append(punctuation, r)
+			}
+		}
+		for utf8.RuneCountInString(body) > 96 {
+			bodyparts := strings.FieldsFunc(body, func(r rune) bool {
+				return r == '.' || r == '?' || r == '!'
+			})
+			fmt.Println(bodyparts)
+			fmt.Println(punctuation)
 			bodyparts = bodyparts[:len(bodyparts)-1]
-			body = strings.Join(bodyparts, ".")
+			body = ""
+			for i := 0; i < len(bodyparts); i++ {
+				body += bodyparts[i] + string(punctuation[i])
+			}
 		}
 		parts[1] = body
 
