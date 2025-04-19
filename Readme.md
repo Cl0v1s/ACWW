@@ -72,7 +72,19 @@ A backend system that:
   - `GIN_MODE`: Specifies the mode in which the server operates (release).
   - `PORT`: Defines the port on which the server listens for incoming connections.
   - `API_KEY`: Contains a valid Mistral API key for accessing the `mistral-small-latest` model.
+  
+#### Prompt Configuration
+The server requires a file named `prompt.txt` located in its directory. This file contains the prompt template sent to the language model. The template must use the following placeholders in this specific order:
 
+- `%s`: Town name
+- `%s`: Villager description
+- `%s`: Receiver's name
+- `%s`: Attachment name ("No package" will be inserted if there is no attachment)
+- `%s`: Letter content from the player
+- `%s`: Tone to use
+- `%s`: Language
+
+The placeholders will be dynamically replaced with the appropriate values during runtime. Ensure the prompt is crafted to guide the language model in generating accurate and immersive responses.
 
 ## References
 
