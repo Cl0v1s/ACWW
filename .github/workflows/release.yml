@@ -45,6 +45,8 @@ jobs:
       - name: Build 3DS Client
         working-directory: client/3ds
         run: |
+            apt update 
+            apt install -y imagemagick 
             make
             zip 3ds.zip client.3dsx client.smdh
 
