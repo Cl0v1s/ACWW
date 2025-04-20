@@ -3,6 +3,7 @@
 *.nds
 *.3dsx
 *.sys
+*.smdh
 build
 client/client
 server/server

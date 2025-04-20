@@ -37,10 +37,15 @@ SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
 GRAPHICS	:=	gfx
-NO_SMDH := true
 # GFXBUILD	:=	$(BUILD)
 #ROMFS		:=	romfs
 #GFXBUILD	:=	$(ROMFS)/gfx
+
+APP_TITLE     := Antoine
+APP_DESCRIPTION := Make villagers understand you
+APP_AUTHOR := Clovis
+APP_ICON 	   := ./../../res/leaf.png
+
 
 #---------------------------------------------------------------------------------
 # options for code generation
