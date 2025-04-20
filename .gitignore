@@ -2,7 +2,6 @@
 *.elf
 *.nds
 *.3dsx
-*.smdh
 *.sys
 build
 client/client
