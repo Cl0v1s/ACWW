@@ -2,6 +2,12 @@
 .SUFFIXES:
 #---------------------------------------------------------------------------------
 
+# These set the information text in the nds file
+GAME_TITLE     := Antoine
+GAME_SUBTITLE1 := Make villagers understand you
+GAME_SUBTITLE2 := https://github.com/Cl0v1s/ACWW
+GAME_ICON 	   := ./../../res/leaf.bmp
+
 
 ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
