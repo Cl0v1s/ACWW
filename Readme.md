@@ -37,11 +37,13 @@ A DS homebrew application that:
 #### Installation on 3DS
 1. Download the `3ds.zip` file from the latest release.
 2. Extract the archive and place the `Antoine` folder into the `3ds` directory on your console's SD card.
+3. Place the `ac.txt` configuration file inside the `Antoine` folder. Ensure it is formatted as described above.
 
 #### Installation on DS
 1. Download the `nds.zip` file from the latest release.
 2. Extract the archive and locate the `.nds` file inside.
 3. Place the `.nds` file alongside your other `.nds` files on your flashcard or SD card.
+4. Place the `ac.txt` configuration file inside the same folder. Ensure it is formatted as described above.
 
 ### Server
 A backend system that:
