@@ -39,7 +39,7 @@ class NetNDS: public Net {
             free(addr);
         }
 
-        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) {
+        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, int score, std::string &intro, std::string &body, std::string &end) {
             int soc = socket(AF_INET, SOCK_STREAM, 0);
             int result = connect(soc, (struct sockaddr *)&this->remote, sizeof(this->remote));
             if(result != 0) {

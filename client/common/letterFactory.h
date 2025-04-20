@@ -8,6 +8,7 @@
 #include "./letter.h"
 #include "utils.h"
 #include "./net.h"
+#include "score.h"
 
 typedef struct {
     std::string intro;
@@ -35,7 +36,9 @@ class LetterFactory {
             std::string body = letter.GetBodyPart();
             std::string end = letter.GetEndPart();
 
-            std::string reply = getNet()->call(lang, senderId, letter.GetSenderPlayerName().c_str(), letter.GetReceiverTownName().c_str(), letter.GetAttachementId(), 100, intro, body, end);
+            int score = calculateScore(std::string(lang), body);
+
+            std::string reply = getNet()->call(lang, senderId, letter.GetSenderPlayerName().c_str(), letter.GetReceiverTownName().c_str(), letter.GetAttachementId(), score, intro, body, end);
             if(reply.length() == 0) {
                 return - 1;
             }

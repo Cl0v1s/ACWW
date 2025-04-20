@@ -29,7 +29,7 @@
 
 class Net {
     public:
-        virtual std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) = 0;
+        virtual std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, int score, std::string &intro, std::string &body, std::string &end) = 0;
         virtual ~Net() {};
 };
 
@@ -59,7 +59,7 @@ static inline std::string jsonEscape(const std::string &input) {
     return output;
 }
 
-static inline int buildBody(char* dest, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) {
+static inline int buildBody(char* dest, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, int score, std::string &intro, std::string &body, std::string &end) {
 
     intro = jsonEscape(intro);
     body = jsonEscape(body);
@@ -72,7 +72,7 @@ static inline int buildBody(char* dest, const char* language, const char* sender
         "  \"receiverName\": \"%s\",\n"
         "  \"townName\": \"%s\",\n"
         "  \"attachementId\": %u,\n"
-        "  \"score\": %u,\n"
+        "  \"score\": %d,\n"
         "  \"intro\": \"%s\",\n"
         "  \"body\": \"%s\",\n"
         "  \"end\": \"%s\"\n"
@@ -95,7 +95,7 @@ static inline int buildRequest(char* dest, const char* addr, int port, const cha
     );
 }
 
-static inline int emit(int soc, const char* addr, int port, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, uint8_t score, std::string &intro, std::string &body, std::string &end) {
+static inline int emit(int soc, const char* addr, int port, const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, int score, std::string &intro, std::string &body, std::string &end) {
     char* raw = (char*)malloc(sizeof(char) * 1000); // big size to be sure to store everything
     buildBody(raw, language, senderId, receiverName, townName, attachementId, score, intro, body, end);
     char* json = (char*)malloc(sizeof(char) * strlen(raw) + 1); // +1 to keep the \0
