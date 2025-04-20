@@ -54,7 +54,7 @@ A DS homebrew application that:
   ```
   <server>        # Remote server address
   <port>          # Remote server port
-  <lang>          # Language for villager responses (e.g., en, fr, jp)
+  <lang>          # Language for villager responses (Supported: english, french)
   <launcher>      # true/false - Launch AC:WW with nds-bootstrap after editing (only available on NDS)
   <bootstrapNDS>  # Path to nds-bootstrap executable (only available on NDS), set to empty line on 3ds
   <bootstrapINI>  # Path to nds-bootstrap configuration file (only available on NDS), set to empty line on 3ds
