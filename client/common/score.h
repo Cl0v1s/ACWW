@@ -114,7 +114,7 @@ static inline int CCheck(int score, std::string &body) {
  */
 static inline int DCheck(int score, std::string &body) {
     bool found = false;
-    int i = 0;
+    unsigned int i = 0;
     while(found == false && i < body.length()) {
         char c = body[i];
         int count = 1;
@@ -169,7 +169,7 @@ static inline int FCheck(int score, std::string &body) {
  */
 static inline int GCheck(int score, std::string &body) {
     int count = 0;
-    for(int i = 0; i < body.length(); i += 32) {
+    for(unsigned int i = 0; i < body.length(); i += 32) {
         std::string part = body.substr(i, 32);
         bool found = std::find(part.begin(), part.end(), ' ') != part.end();
         if(found == false) count += 1;
