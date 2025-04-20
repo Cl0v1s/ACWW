@@ -28,7 +28,7 @@ A DS homebrew application that:
   <launcher>      # true/false - On NDS: Launch AC:WW with nds-bootstrap (required) / On 3DS: Launch the title in the ROM section below, it can be nds-bootstrap frontend or a version of the game installed via nds-forwarder
   <bootstrapNDS>  # Path to nds-bootstrap executable (only available on NDS), set to empty line on 3ds
   <bootstrapINI>  # Path to nds-bootstrap configuration file (only available on NDS), set to empty line on 3ds
-  <rom>           # On nds: Path to the AC:WW ROM file on nds / On 3ds: Title id of AC:WW
+  <rom>           # On NDS: Path to the AC:WW ROM file on nds / On 3DS: Title id of nds-bootstrap frontend or AC:WW via nds-forwarder
   <save>          # Path to the AC:WW save file
   <empty line >   # The file must end with an empty line
   ```
