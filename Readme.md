@@ -11,46 +11,16 @@ The system works as follows:
 2. The **server** generates personalized responses based on the villager's personality and the content of the player's letter.
 3. The **client** injects the generated response into the game's memory, replacing the player's letter to prevent duplicate responses.
 
-## Features
+## Installation
 
-### Minimum Viable Product (MVP)
-- **Read Sent Letters**: Extract letters sent by the player from the game's memory.
-- **Generate Responses**: Use a language model (currently Mistral) to create replies tailored to the villager's personality.
-- **Inject Responses**: Insert the generated replies into the game's memory.
-
-### Future Enhancements
-- **Prevent duplicates**: Remove letters from memory to prevent the game from generate replies by itself.
-- **Letter Scoring**: Simulate the in-game scoring system to influence friendship levels with villagers and response tone.
-- **Gift System**: Add gifts to villager responses based on the player's letter content or attached items.
-
-## Technical Details
-
-### Memory Layout
-- **Sent Letters**: Stored in a buffer starting at `0x00014640` (replicated at `0x0002a620`). The buffer supports up to 10 letters.
-- **Mailbox Letters**: Located at `0x00012010` with a capacity of 10 slots. Letters are cleared from this area once moved to the player's inventory.
-- **Pocket Letters**: Found at `0x00001120`, with space for 10 letters. (Unused by this system)
-
-### Letter Format
-- Letters follow a specific structure, including headers, body, and footer. Key fields include:
-  - **Villager ID**: Identifies the sender or recipient.
-  - **Message Body**: Encoded as in-game characters.
-  - **Flags**: Control display options, such as showing the NPC's name in the inventory.
-
-For more details, refer to the [ACWW-Web-SaveEditor Letter Format](https://github.com/Universal-Team/ACWW-Web-SaveEditor/blob/main/assets/js/core/letter.js).
-
-### Villager Data
-Villager information, such as species and personality, is extracted using scrapped data and mapped to in-game IDs. This ensures accurate and immersive responses.
-
-### Checksum Validation
-To prevent tampering, the game uses a checksum mechanism. The checksum is a little-endian sum of all memory values, ensuring data integrity.
-
-## Components
+As a user you only need to install the client on your console. You also need to configure your client with the `ac.txt` file described below.  
+To use the server, you have to know a running Antoine server by it's address.
 
 ### Client
 A DS homebrew application that:
 - Reads and writes memory to interact with the game's save data.
 - Communicates with the server to fetch generated responses.
-- Requires configuration via a file named `ac.config` located alongside the homebrew on the DS's SD card. The file must be formatted as follows:
+- Requires configuration via a file named `ac.txt` located alongside the homebrew on the DS's SD card. The file must be formatted as follows:
   ```
   <server>        # Remote server address
   <port>          # Remote server port
@@ -63,6 +33,15 @@ A DS homebrew application that:
   <empty line >   # The file must end with an empty line
   ```
 - Requires an active internet connection to communicate with the server. This connection must be configured beforehand. If running on a 3DS, ensure that a DS connection is set up in the system settings for the homebrew to function properly.
+
+#### Installation on 3DS
+1. Download the `3ds.zip` file from the latest release.
+2. Extract the archive and place the `Antoine` folder into the `3ds` directory on your console's SD card.
+
+#### Installation on DS
+1. Download the `nds.zip` file from the latest release.
+2. Extract the archive and locate the `.nds` file inside.
+3. Place the `.nds` file alongside your other `.nds` files on your flashcard or SD card.
 
 ### Server
 A backend system that:
@@ -91,12 +70,5 @@ The placeholders will be dynamically replaced with the appropriate values during
 - [ACWW-Web-SaveEditor](https://github.com/Universal-Team/ACWW-Web-SaveEditor/blob/main/assets/js/core/letter.js)
 - [Animal Crossing Letters Project](https://jamchamb.net/projects/animal-crossing-letters)
 - [GameFAQs Discussion on Letter Buffers](https://gamefaqs.gamespot.com/boards/920786-animal-crossing-wild-world/41195712)
-
-## Getting Started
-
-1. **Set Up the Client**: Install the DS homebrew application on your device.
-2. **Configure the Client**: Create the `ac.config` file on the SD card with the required settings.
-3. **Run the Server**: Deploy the server locally or on a remote machine with the required settings.
-4. **Send Letters**: Write letters to villagers in-game
 
 ![Bob dancing](http://vignette2.wikia.nocookie.net/animalcrossing/images/f/fb/Bobdance.gif/revision/latest?cb=20130922040310)
