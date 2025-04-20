@@ -37,13 +37,13 @@ jobs:
 
       - name: Build NDS Client
         working-directory: client/nds
-          run: |
+        run: |
             make
             zip nds.zip client.nds
 
       - name: Build 3DS Client
         working-directory: client/3ds
-          run: |
+        run: |
             make
             zip 3ds.zip client.3dsx client.smdh
 
