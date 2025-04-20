@@ -50,8 +50,11 @@ jobs:
       - name: Build 3DS Client
         working-directory: client/3ds
         run: |
-            make
-            zip 3ds.zip client.3dsx client.smdh
+              make
+              mkdir -p Antoine
+              mv client.3dsx Antoine/Antoine.3dsx
+              mv client.smdh Antoine/Antoine.smdh
+              zip -r 3ds.zip Antoine
 
       - name: Upload NDS Client Asset
         uses: actions/upload-release-asset@v1
