@@ -25,7 +25,7 @@ A DS homebrew application that:
   <server>        # Remote server address
   <port>          # Remote server port
   <lang>          # Language for villager responses (Supported: english, french)
-  <launcher>      # true/false - Launch AC:WW with nds-bootstrap after editing (only available on NDS)
+  <launcher>      # true/false - On NDS: Launch AC:WW with nds-bootstrap (required) / On 3DS: Launch the title in the ROM section below, it can be nds-bootstrap frontend or a version of the game installed via nds-forwarder
   <bootstrapNDS>  # Path to nds-bootstrap executable (only available on NDS), set to empty line on 3ds
   <bootstrapINI>  # Path to nds-bootstrap configuration file (only available on NDS), set to empty line on 3ds
   <rom>           # On nds: Path to the AC:WW ROM file on nds / On 3ds: Title id of AC:WW
