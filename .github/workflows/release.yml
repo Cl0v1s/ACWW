@@ -37,6 +37,8 @@ jobs:
       - name: Build NDS Client
         working-directory: client/nds
         run: |
+            apt update 
+            apt install imagemagick 
             make
             zip nds.zip client.nds
 
