@@ -49,6 +49,8 @@ func gen(c *gin.Context) {
 		return
 	}
 
+	fmt.Printf("Request: %+v\n", request)
+
 	senderName, exists := GetVillagerName(request.SenderId)
 	if !exists {
 		c.String(404, "Villager "+request.SenderId+" does not exists.")
@@ -73,9 +75,9 @@ func gen(c *gin.Context) {
 		c.String(500, err.Error())
 		return
 	}
-	fmt.Println(prompt)
+	// fmt.Println(prompt)
 	response, err := Call(prompt)
-	fmt.Println(response)
+	// fmt.Println(response)
 	if err != nil {
 		fmt.Println(err)
 		c.String(500, err.Error())
@@ -95,8 +97,6 @@ func gen(c *gin.Context) {
 			bodyparts := strings.FieldsFunc(body, func(r rune) bool {
 				return r == '.' || r == '?' || r == '!'
 			})
-			fmt.Println(bodyparts)
-			fmt.Println(punctuation)
 			bodyparts = bodyparts[:len(bodyparts)-1]
 			body = ""
 			for i := 0; i < len(bodyparts); i++ {
