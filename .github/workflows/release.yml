@@ -37,11 +37,15 @@ jobs:
 
       - name: Build NDS Client
         working-directory: client/nds
-        run: make
+          run: |
+            make
+            zip nds.zip client.nds
 
       - name: Build 3DS Client
         working-directory: client/3ds
-        run: make
+          run: |
+            make
+            zip 3ds.zip client.3dsx client.smdh
 
       - name: Upload NDS Client Asset
         uses: actions/upload-release-asset@v1
@@ -49,8 +53,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: client/nds/client.nds
-          asset_name: client.nds
+          asset_path: client/nds/nds.zip
+          asset_name: nds.zip
           asset_content_type: application/octet-stream
 
       - name: Upload 3DS Client Asset
@@ -59,8 +63,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: client/3ds/client.3dsx
-          asset_name: client.3dsx
+          asset_path: client/3ds/3ds.zip
+          asset_name: 3ds.zip
           asset_content_type: application/octet-stream
 
 

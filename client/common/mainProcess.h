@@ -52,7 +52,7 @@ static inline void mainProcess(int key) {
         consolef("Press start to launch the game\n");
         waitForKey(key);
         dsStartWW(config);
-        dsExit(0);
+        return;
     } 
     dsExit(0);
 }
