@@ -55,3 +55,9 @@ TEST_CASE("GCheck: space in groups of 32 characters", "[GCheck]") {
     body = std::string(64, 'a');
     REQUIRE(GCheck(0, body) == -40);
 }
+
+
+TEST_CASE("Test Salut mon gars", "[All]") {
+    std::wstring body(L"salut mon gars");
+    REQUIRE(calculateScore("french", body) == 19);
+}

@@ -93,7 +93,7 @@ func gen(c *gin.Context) {
 				punctuation = append(punctuation, r)
 			}
 		}
-		for utf8.RuneCountInString(body) > 96 {
+		for utf8.RuneCountInString(body) > 129 {
 			bodyparts := strings.FieldsFunc(body, func(r rune) bool {
 				return r == '.' || r == '?' || r == '!'
 			})

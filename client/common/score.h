@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 
+#include "utils.h"
 #include "trigrams.h"
 
 // This code implements the work of James Chambers described here:
@@ -113,25 +114,10 @@ static inline int CCheck(int score, std::string &body) {
  * deducts 50 points and stops checking. Otherwise it does not affect the score.
  */
 static inline int DCheck(int score, std::string &body) {
-    bool found = false;
-    unsigned int i = 0;
-    while(found == false && i < body.length()) {
-        char c = body[i];
-        int count = 1;
-        for(int u = 1; u <= 2; u++) {
-            if(c == body[i + u]) {
-                count += 1;
-            } else {
-                break;
-            }
+    for (size_t i = 0; i < body.length() - 2; ++i) {
+        if (std::isalpha(body[i]) && body[i] == body[i + 1] && body[i] == body[i + 2]) {
+            return score - 50;
         }
-        if(count >= 3) {
-            found = true;
-        }
-        i += 1;
-    }
-    if(found) {
-        return score - 50;
     }
     return score;
 }
@@ -188,6 +174,8 @@ static inline int calculateScore(const std::string &language, const std::wstring
     size_t start = body.find_first_not_of(' ');
     size_t end = body.find_last_not_of(' ');
     body = (start == std::string::npos || end == std::string::npos) ? "" : body.substr(start, end - start + 1);
+    end = body.find_first_of('\0');
+    body = body.substr(0, end - start);
 
     int score = 0;
     score = ACheck(score, body);
