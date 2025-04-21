@@ -50,12 +50,12 @@ static inline void printConfig(const Config &config) {
 static inline Config loadConfig(const char* path) {
     Config config;
     int length = 1024;
-    char ccontent[length];
+    uint8_t ccontent[length];
     if(!readFile(path, ccontent, length)) {
         consolef("Unable to load config file, please create and setup your configuration.\n");
         dsExit(1);
     }
-    std::string content(ccontent);
+    std::string content((char*)ccontent);
     size_t pos = 0;
     size_t lastPos = 0;
 

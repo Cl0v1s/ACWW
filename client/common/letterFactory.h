@@ -11,9 +11,9 @@
 #include "score.h"
 
 typedef struct {
-    std::string intro;
-    std::string body;
-    std::string end;
+    std::wstring intro;
+    std::wstring body;
+    std::wstring end;
 } Content;
 
 class LetterFactory {
@@ -32,13 +32,12 @@ class LetterFactory {
             char senderId[10]; 
             sprintf(senderId, "%04x", letter.GetReceiverPlayerId() & 0xFF); // somehow it's actually on 8bits 
 
-            std::string intro = letter.GetIntroPart();
-            std::string body = letter.GetBodyPart();
-            std::string end = letter.GetEndPart();
-
+            std::wstring intro = letter.GetIntroPart();
+            std::wstring body = letter.GetBodyPart();
+            std::wstring end = letter.GetEndPart();
             int score = calculateScore(std::string(lang), body);
 
-            std::string reply = getNet()->call(lang, senderId, letter.GetSenderPlayerName().c_str(), letter.GetReceiverTownName().c_str(), letter.GetAttachementId(), score, intro, body, end);
+            std::wstring reply = getNet()->call(lang, senderId, letter.GetSenderPlayerName(), letter.GetReceiverTownName(), letter.GetAttachementId(), score, intro, body, end);
             if(reply.length() == 0) {
                 return - 1;
             }
@@ -50,11 +49,11 @@ class LetterFactory {
                 }
             }
 
-            size_t firstNewline = reply.find('\n');
-            size_t secondNewline = reply.find('\n', firstNewline + 1);
-            std::string introPart = reply.substr(0, firstNewline);
-            std::string bodyPart = reply.substr(firstNewline + 1, secondNewline - firstNewline - 1);
-            std::string endPart = reply.substr(secondNewline + 1);
+            size_t firstNewline = reply.find(L'\n');
+            size_t secondNewline = reply.find(L'\n', firstNewline + 1);
+            std::wstring introPart = reply.substr(0, firstNewline);
+            std::wstring bodyPart = reply.substr(firstNewline + 1, secondNewline - firstNewline - 1);
+            std::wstring endPart = reply.substr(secondNewline + 1);
 
             content.intro = introPart;
             content.body = bodyPart;
@@ -74,7 +73,7 @@ class LetterFactory {
         /**
          * Generate answer letter from player's letter
          */
-        Letter Answer(Letter &letter, char* save, int offset, LetterStruct* region, const char* lang) {
+        Letter Answer(Letter &letter, uint8_t* save, int offset, LetterStruct* region, const char* lang) {
             Letter answer(save, offset, region);
             Content content;
             if(this->GenerateContent(content, letter, lang) == -1) {

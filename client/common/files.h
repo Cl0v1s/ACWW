@@ -17,7 +17,7 @@
 
 void initFiles();
 
-static inline bool writeFile(const char *filename, char *content, int length)
+static inline bool writeFile(const char *filename, uint8_t *content, int length)
 {
     FILE *fp = fopen(filename, "w");
     if (fp == NULL)
@@ -31,7 +31,7 @@ static inline bool writeFile(const char *filename, char *content, int length)
     return true;
 }
 
-static inline bool readFile(const char *filename, char* content, int length)
+static inline bool readFile(const char *filename, uint8_t* content, int length)
 {
     FILE* fp = fopen(filename, "rb");
     if (fp == NULL)
@@ -45,7 +45,7 @@ static inline bool readFile(const char *filename, char* content, int length)
     return true;
 }
 
-static inline void checksum(char *save)
+static inline void checksum(uint8_t *save)
 {
     uint16_t checksVar = 0;
     for (int index = 0; index < SAVCOPY_SIZE; index += 2)

@@ -16,7 +16,7 @@ static inline void mainProcess(int key) {
     initConsole();
     initFiles();
     // We need to put that data on stack, it doesnt work on rom
-    char* saveData = (char*)malloc(sizeof(char) * SAVE_LENGTH);
+    uint8_t* saveData = (uint8_t*)malloc(sizeof(uint8_t) * SAVE_LENGTH);
     Config config = loadConfig("./ac.txt");
     printConfig(config);
     initNet(config.server.c_str(), config.port);

@@ -57,7 +57,7 @@ static inline unsigned char encodeChar(wchar_t input, bool jpn) {
     }
 
     if(!jpn) { // special char replacement for USA_EUR, yup that's not cool but editing the table above is not an option so...
-        if(input == 0x0027) return 0xD6; // replace ' for ’
+        if(input == 0x0027) return 177; // replace ' for ’
     }
 
     int index = -1;
@@ -70,40 +70,33 @@ static inline unsigned char encodeChar(wchar_t input, bool jpn) {
         i += 1;
     }
     if(index == -1) {
-        consolef("Unkown char %c %04x\n", input, input);
+        // consolef("Unkown char %c %04x\n", input, input);
         return jpn ? 232 : 156; // ?
     }
     return index;
 }
 
 
-static inline std::string decode(const std::string& input, bool jpn, bool kor) {
+static inline std::wstring decode(const uint8_t* input, int length, bool jpn, bool kor) {
     if(kor) {
-        consolef("We do not support korea for now.\n");
-        dsExit(1);
+        return L"We do not support Korea for now.";
     }
-
-    std::string output = std::string(input);
-    const char* cinput = input.c_str();
-    for(unsigned int i = 0; i < input.length(); i++) {
-        output[i] = decodeChar(cinput[i], jpn);
+    std::wstring result;
+    for (int i = 0; i < length; i++) {
+        result += decodeChar(input[i], jpn);
     }
-    return output;
+    return std::wstring(result.begin(), result.end());
 }
 
 
-static inline std::string encode(const std::string& input, bool jpn, bool kor) {
+static inline bool encode(const std::wstring& input, uint8_t* output, bool jpn, bool kor) {
     if(kor) {
-        consolef("We do not support korea for now.\n");
-        dsExit(1);
+        return false;
     }
-
-    std::string output = std::string(input);
-    const char* cinput = output.c_str();
     for(unsigned int i = 0; i < input.length(); i++) {
-        output[i] = encodeChar(cinput[i] & 0xFF, jpn);
+        output[i] = encodeChar(input[i], jpn);
     }
-    return output;
+    return true;
 }
 
 

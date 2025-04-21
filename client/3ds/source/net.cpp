@@ -16,9 +16,6 @@ Net* net;
 class Net3DS: public Net {
     private:
         u32* SOC_buffer;
-        sockaddr_in remote;
-        char* addr;
-        int port;
     public:
         Net3DS(const char* _addr, int _port) {
             SOC_buffer = (u32*)memalign(SOC_ALIGN, SOC_BUFFERSIZE);
@@ -49,29 +46,6 @@ class Net3DS: public Net {
             free(addr);
             free(SOC_buffer);
             socExit();
-        }
-
-        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, int score, std::string &intro, std::string &body, std::string &end) {
-            int soc = socket(AF_INET, SOCK_STREAM, 0);
-            int result = connect(soc, (struct sockaddr *)&this->remote, sizeof(this->remote));
-            if(result != 0) {
-                consolef("%d: unable to connect to %s\n%s\n", errno, addr, strerror(errno) );
-                return std::string("");
-            }
-            result = emit(soc, addr, port, language, senderId, receiverName, townName, attachementId, score, intro, body, end);
-            if(result != 0) {
-                consolef("%d: unable to send data\n%s\n", errno, strerror(errno) );
-                return std::string("");
-            }
-            
-            std::string anwser("");
-            result = receive(soc, anwser);
-            if(result != 0) {
-                consolef("%d: unable to receive data\n%s\n", errno, anwser.c_str());
-                return std::string("");
-            }
-            close(soc);
-            return anwser;
         }
 };
 

@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <string>
 
 #if defined(ARM9) 
 
@@ -23,6 +23,18 @@
 void initConsole();
 
 void waitForKey(int key);
+
+/**
+ * This incorrectly converts utf16 to ASCII, use only for debug printing
+ */
+static inline std::string convertToASCII(std::wstring input) {
+    char output[input.length() + 1];
+    for(unsigned int i = 0; i < input.length(); i++) {
+        output[i] = (char)(input[i] & 0xff);
+    }
+    output[input.length()] = '\0';
+    return std::string(output);
+}
 
 static inline void consolef(const char* tmpl, ...) {
     va_list args;

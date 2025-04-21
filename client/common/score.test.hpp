@@ -1,6 +1,4 @@
-#define CATCH_CONFIG_MAIN
 #include "../vendor/catch.hpp"
-
 #include "./score.h"
 
 TEST_CASE("ACheck: punctuation and capital letters scoring", "[ACheck]") {

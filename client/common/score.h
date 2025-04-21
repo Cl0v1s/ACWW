@@ -177,7 +177,13 @@ static inline int GCheck(int score, std::string &body) {
     return score - count * 20;
 }
 
-static inline int calculateScore(const std::string &language, std::string body) { // copy is made on purpose
+static inline int calculateScore(const std::string &language, const std::wstring &wbody) {
+    // we dont really care about exact chars here so we can keep only lowest utf-16 bits
+    char cbody[wbody.length() + 1];
+    for(unsigned int i = 0; i < wbody.length(); i++) {
+        cbody[i] = (char)(wbody[i] & 0xff);
+    }
+    std::string body(cbody, wbody.length());
     // Trim leading and trailing spaces from the body
     size_t start = body.find_first_not_of(' ');
     size_t end = body.find_last_not_of(' ');

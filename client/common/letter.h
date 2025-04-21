@@ -155,12 +155,12 @@ LetterStruct LETTER_KOR = {
 
 class Letter {
     private:
-        char* saveData;
+        uint8_t* saveData;
         int startOffset;
         LetterStruct* regionalData;
 
     public: 
-        Letter(char* save, int offset, LetterStruct* region) {
+        Letter(uint8_t* save, int offset, LetterStruct* region) {
             saveData = save;
             startOffset = offset;
             regionalData = region;
@@ -174,13 +174,13 @@ class Letter {
             saveData[startOffset + regionalData->TOWNID_RECEIVER + 1] = value & 0xFF;
         }
 
-        std::string GetReceiverTownName() {
-            return decode(std::string(saveData + startOffset + regionalData->TOWNNAME_RECEIVER, regionalData->TOWNNAME_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+        std::wstring GetReceiverTownName() {
+            return decode(saveData + startOffset + regionalData->TOWNNAME_RECEIVER, regionalData->TOWNNAME_LENGTH, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
         }
-        void SetReceiverTownName(const std::string& value) {
-            std::string encodedValue = encode(value, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
-            const char* cvalue = encodedValue.c_str();
-            strncpy(saveData + startOffset + regionalData->TOWNNAME_RECEIVER, cvalue, regionalData->TOWNNAME_LENGTH);
+        void SetReceiverTownName(const std::wstring& value) {
+            uint8_t output[value.length()];
+            encode(value, output, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+            memccpy(saveData + startOffset + regionalData->TOWNNAME_RECEIVER, output, sizeof(uint8_t), regionalData->TOWNNAME_LENGTH);
         }
 
         uint16_t GetReceiverPlayerId() {
@@ -191,13 +191,13 @@ class Letter {
             saveData[startOffset + regionalData->PLAYERID_RECEIVER + 1] = value & 0xFF;
         }
 
-        std::string GetReceiverPlayerName() {
-            return decode(std::string(saveData + startOffset + regionalData->PLAYERNAME_RECEIVER, regionalData->PLAYERNAME_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+        std::wstring GetReceiverPlayerName() {
+            return decode(saveData + startOffset + regionalData->PLAYERNAME_RECEIVER, regionalData->PLAYERNAME_LENGTH, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
         }
-        void SetReceiverPlayerName(const std::string& value) {
-            std::string encodedValue = encode(value, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
-            const char* cvalue = encodedValue.c_str();
-            strncpy(saveData + startOffset + regionalData->PLAYERNAME_RECEIVER, cvalue, regionalData->PLAYERNAME_LENGTH);
+        void SetReceiverPlayerName(const std::wstring& value) {
+            uint8_t output[value.length()];
+            encode(value, output, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+            memccpy(saveData + startOffset + regionalData->PLAYERNAME_RECEIVER, output, sizeof(uint8_t), regionalData->PLAYERNAME_LENGTH);
         }
 
         uint16_t GetSenderTownId() {
@@ -208,13 +208,13 @@ class Letter {
             saveData[startOffset + regionalData->TOWNID_SENDER + 1] = value & 0xFF;
         }
         
-        std::string GetSenderTownName() {
-            return decode(std::string(saveData + startOffset + regionalData->TOWNNAME_SENDER, regionalData->TOWNNAME_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+        std::wstring GetSenderTownName() {
+            return decode(saveData + startOffset + regionalData->TOWNNAME_SENDER, regionalData->TOWNNAME_LENGTH, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
         }
-        void SetSenderTownName(const std::string& value) {
-            std::string encodedValue = encode(value, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
-            const char* cvalue = encodedValue.c_str();
-            strncpy(saveData + startOffset + regionalData->TOWNNAME_SENDER, cvalue, regionalData->TOWNNAME_LENGTH);
+        void SetSenderTownName(const std::wstring& value) {
+            uint8_t output[value.length()];
+            encode(value, output, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+            memccpy(saveData + startOffset + regionalData->TOWNNAME_SENDER, output, sizeof(uint8_t), regionalData->TOWNNAME_LENGTH);
         }
         
         uint16_t GetSenderPlayerId() {
@@ -225,44 +225,43 @@ class Letter {
             saveData[startOffset + regionalData->PLAYERID_SENDER + 1] = value & 0xFF;
         }
         
-        std::string GetSenderPlayerName() {
-            return decode(std::string(saveData + startOffset + regionalData->PLAYERNAME_SENDER, regionalData->PLAYERNAME_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+        std::wstring GetSenderPlayerName() {
+            return decode(saveData + startOffset + regionalData->PLAYERNAME_SENDER, regionalData->PLAYERNAME_LENGTH, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
         }
-        void SetSenderPlayerName(const std::string& value) {
-            std::string encodedValue = encode(value, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
-            const char* cvalue = encodedValue.c_str();
-            strncpy(saveData + startOffset + regionalData->PLAYERNAME_SENDER, cvalue, regionalData->PLAYERNAME_LENGTH);
+        void SetSenderPlayerName(const std::wstring& value) {
+            uint8_t output[value.length()];
+            encode(value, output, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+            memccpy(saveData + startOffset + regionalData->PLAYERNAME_SENDER, output, sizeof(uint8_t), regionalData->PLAYERNAME_LENGTH);
         }
         
-        std::string GetIntroPart() {
-            return decode(std::string(saveData + startOffset + regionalData->INTRO_PART, regionalData->INTRO_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);;
+        std::wstring GetIntroPart() {
+            return decode(saveData + startOffset + regionalData->INTRO_PART, regionalData->INTRO_LENGTH, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);;
         }
 
-        void SetIntroPart(const std::string& intro) {
-            std::string encodedIntro = encode(intro, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
-            const char* cintro = encodedIntro.c_str();
-            this->SetIntroIndex(strlen(cintro));
-            strncpy(saveData + startOffset + regionalData->INTRO_PART, cintro, regionalData->INTRO_LENGTH);
+        void SetIntroPart(const std::wstring& value) {
+            uint8_t output[value.length()];
+            encode(value, output, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+            memccpy(saveData + startOffset + regionalData->INTRO_PART, output, sizeof(uint8_t), regionalData->INTRO_LENGTH);
         }
 
-        std::string GetBodyPart() {
-            return decode(std::string(saveData + startOffset + regionalData->BODY_PART, regionalData->BODY_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+        std::wstring GetBodyPart() {
+            return decode(saveData + startOffset + regionalData->BODY_PART, regionalData->BODY_LENGTH, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
         }
 
-        void SetBodyPart(const std::string& body) {
-            std::string encodedBody = encode(body, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
-            const char* cbody = encodedBody.c_str();
-            strncpy(saveData + startOffset + regionalData->BODY_PART, cbody, regionalData->BODY_LENGTH);
+        void SetBodyPart(const std::wstring& value) {
+            uint8_t output[value.length()];
+            encode(value, output, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+            memccpy(saveData + startOffset + regionalData->BODY_PART, output, sizeof(uint8_t), regionalData->BODY_LENGTH);
         }
 
-        std::string GetEndPart() {
-            return decode(std::string(saveData + startOffset + regionalData->END_PART, regionalData->END_LENGTH), regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+        std::wstring GetEndPart() {
+            return decode(saveData + startOffset + regionalData->END_PART, regionalData->END_LENGTH, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
         }
 
-        void SetEndPart(const std::string& end) {
-            std::string encodedEnd = encode(end, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
-            const char* cend = encodedEnd.c_str();
-            strncpy(saveData + startOffset + regionalData->END_PART, cend, regionalData->END_LENGTH);
+        void SetEndPart(const std::wstring& value) {
+            uint8_t output[value.length()];
+            encode(value, output, regionalData == &LETTER_JPN, regionalData == &LETTER_KOR);
+            memccpy(saveData + startOffset + regionalData->END_PART, output, sizeof(uint8_t), regionalData->END_LENGTH);
         }
 
         uint8_t GetIntroIndex() {
@@ -317,15 +316,15 @@ class Letter {
 static inline void print(Letter &letter) {
     consolef("Sender PlayerId: %04x\n", letter.GetSenderPlayerId());
     consolef("Sender TownID: %04x\n", letter.GetSenderTownId());
-    consolef("Sender Player: %s\n", letter.GetSenderPlayerName().c_str());
-    consolef("Sender Town: %s\n", letter.GetSenderTownName().c_str());
-    consolef("Receiver Player: %s\n", letter.GetReceiverPlayerName().c_str());
+    consolef("Sender Player: %s\n", convertToASCII(letter.GetSenderPlayerName()).c_str());
+    consolef("Sender Town: %s\n", convertToASCII(letter.GetSenderTownName()).c_str());
+    consolef("Receiver Player: %s\n", convertToASCII(letter.GetReceiverPlayerName()).c_str());
     consolef("Receiver PlayerId: %04x\n", letter.GetReceiverPlayerId());
     consolef("Receiver TownId: %04x\n", letter.GetReceiverTownId());
-    consolef("Receiver Town: %s\n", letter.GetReceiverTownName().c_str());
-    consolef("Intro: %s\n", letter.GetIntroPart().c_str());
-    consolef("Body: %s\n", letter.GetBodyPart().c_str());
-    consolef("End: %s\n", letter.GetEndPart().c_str());
+    consolef("Receiver Town: %s\n", convertToASCII(letter.GetReceiverTownName()).c_str());
+    consolef("Intro: %s\n", convertToASCII(letter.GetIntroPart()).c_str());
+    consolef("Body: %s\n", convertToASCII(letter.GetBodyPart()).c_str());
+    consolef("End: %s\n", convertToASCII(letter.GetEndPart()).c_str());
     consolef("Flags: %04x\n", letter.GetFlags());
     consolef("IntroIndex: %04x\n", letter.GetIntroIndex());
 }
