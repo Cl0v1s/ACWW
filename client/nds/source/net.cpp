@@ -10,10 +10,6 @@
 Net* net;
 
 class NetNDS: public Net {
-    private:
-        sockaddr_in remote;
-        char* addr;
-        int port;
     public:
         NetNDS(const char* _addr, int _port) {
             if(!Wifi_InitDefault(WFC_CONNECT)) {
@@ -37,35 +33,6 @@ class NetNDS: public Net {
 
         ~NetNDS() {
             free(addr);
-        }
-
-        std::string call(const char* language, const char* senderId, const char* receiverName, const char* townName, uint16_t attachementId, int score, std::string &intro, std::string &body, std::string &end) {
-            int soc = socket(AF_INET, SOCK_STREAM, 0);
-            int result = connect(soc, (struct sockaddr *)&this->remote, sizeof(this->remote));
-            if(result != 0) {
-                consolef("%d: unable to connect to %s\n%s\n", errno, addr, strerror(errno) );
-                return std::string("");
-            }
-            result = emit(soc, addr, port, language, senderId, receiverName, townName, attachementId, score, intro, body, end);
-            if(result != 0) {
-                consolef("%d: unable to send data\n%s\n", errno, strerror(errno) );
-                return std::string("");
-            }
-            
-            std::string anwser("");
-            result = receive(soc, anwser);
-            if(result != 0) {
-                consolef("%d: unable to receive data\n%s\n", errno, anwser.c_str());
-                return std::string("");
-            }
-
-            shutdown(soc, SHUT_RDWR);
-            #ifndef ARM9
-                close(soc);
-            #else 
-                closesocket(soc);
-            #endif
-            return anwser;
         }
 };
 
