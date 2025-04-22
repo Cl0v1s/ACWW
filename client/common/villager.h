@@ -3,10 +3,28 @@
 
 #include <stdint.h>
 
+typedef struct {
+    uint16_t TOWN_ID;
+    uint16_t TOWN_NAME;
+    uint8_t TOWN_NAME_LENGTH;
+    uint16_t PLAYER_ID;
+    uint16_t PLAYER_NAME;
+    uint8_t PLAYER_NAME_LENGTH;
+    uint16_t DATE_DAY;
+    uint16_t DATE_MONTH;
+    uint16_t DATE_YEAR;
+    uint16_t FRIENDSHIP;
+    uint16_t FLAGS;
+} VillagerMemoryStruct;
 
 typedef struct {
     uint16_t VILLAGER_START;
     uint16_t VILLAGER_SIZE;
+    
+    uint16_t MEMORIES_START;
+    uint8_t MEMORIES_SIZE;
+    uint8_t MEMORIES_LENGTH;
+ 
 
     uint16_t LETTER;
     uint16_t FURNITURE;
@@ -17,6 +35,21 @@ typedef struct {
     uint16_t CARPET;
     uint16_t UMBRELLA;
 } VillagerStruct;
+
+VillagerMemoryStruct MEMORY_EUR_USA = {
+    .TOWN_ID = 0x02,
+    .TOWN_NAME = 0x04,
+    .TOWN_NAME_LENGTH = 8,
+
+    .PLAYER_ID = 0x0C,
+    .PLAYER_NAME = 0x0E,
+    .PLAYER_NAME_LENGTH = 8,
+
+    .DATE_DAY = 0x8A7E - 0x8A3A,
+    .DATE_DAY = 0x8A7F - 0x8A3A,
+    .DATE_MONTH = 0x8A80 - 0x8A3A,
+    .DATE_YEAR = 0x8A81 - 0x8A3A
+};
 
 VillagerStruct VILLAGER_EUR_USA = {
     .VILLAGER_START = 0x8A3C,
