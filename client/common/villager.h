@@ -9,7 +9,8 @@
 #include "utils.h"
 #include "translator.h"
 
-#define MEMORIES_COUNT 8
+#define MEMORIES_COUNT 4
+#define VILLAGERS_COUNT 8
 
 typedef struct {
     uint16_t TOWN_ID;
@@ -43,18 +44,20 @@ typedef struct {
 } VillagerStruct;
 
 VillagerMemoryStruct MEMORY_EUR_USA = {
-    .TOWN_ID = 0x02,
-    .TOWN_NAME = 0x04,
+    .TOWN_ID = 0x00,
+    .TOWN_NAME = 0x02,
     .TOWN_NAME_LENGTH = 8,
 
-    .PLAYER_ID = 0x0C,
-    .PLAYER_NAME = 0x0E,
+    .PLAYER_ID = 0x0C - 2,
+    .PLAYER_NAME = 0x0E - 2,
     .PLAYER_NAME_LENGTH = 8,
 
-    .FRIENDSHIP = 0x8A7E - 0x8A3A,
-    .DATE_DAY = 0x8A7F - 0x8A3A,
-    .DATE_MONTH = 0x8A80 - 0x8A3A,
-    .DATE_YEAR = 0x8A81 - 0x8A3A
+    .DATE_DAY = 0x8A7F - 0x8A3A - 2,
+    .DATE_MONTH = 0x8A80 - 0x8A3A - 2,
+    .DATE_YEAR = 0x8A81 - 0x8A3A - 2,
+
+    .FRIENDSHIP = 0x8A7E - 0x8A3A - 2,
+    .FLAGS = 0
 };
 
 VillagerMemoryStruct MEMORY_JPN = {};
@@ -64,49 +67,52 @@ VillagerMemoryStruct MEMORY_KOR = {};
 VillagerStruct VILLAGER_EUR_USA = {
     .VILLAGER_START = 0x8A3C,
     .VILLAGER_SIZE = 0x700,
-	.LETTER = 0x568,
-	.FURNITURE = 0x6AC, // 10.
-	.PERSONALITY = 0x6CA, 
-	.VILLAGER_ID = 0x6CB, 
-	.SHIRT = 0x6EC, 
-	.WALLPAPER = 0x6EE, 
-	.CARPET = 0x6EF, 
-	.UMBRELLA = 0x6F4,
 
+    .MEMORIES_START = 0x00,
     .MEMORIES_SIZE = 0x8AA2 - 0x8A3A,
-    .MEMORIES_START = 0x8A3A - 0x8A3C,
+
+    .LETTER = 0x568,
+    .FURNITURE = 0x6AC, // 10.
+    .PERSONALITY = 0x6CA, 
+    .VILLAGER_ID = 0x6CB, 
+    .SHIRT = 0x6EC, 
+    .WALLPAPER = 0x6EE, 
+    .CARPET = 0x6EF, 
+    .UMBRELLA = 0x6F4,
 };
 
 VillagerStruct VILLAGER_JPN = {
     .VILLAGER_START = 0x744C,
     .VILLAGER_SIZE = 0x5C0,
-    .LETTER = 0x4A0,
-	.FURNITURE = 0x578, // 10.
-	.PERSONALITY = 0x594, 
-	.VILLAGER_ID = 0x595, 
-	.SHIRT = 0x5AE, 
-	.WALLPAPER = 0x5B0, 
-	.CARPET = 0x5B1, 
-	.UMBRELLA = 0x544,
 
-    .MEMORIES_SIZE = 0,
     .MEMORIES_START = 0,
+    .MEMORIES_SIZE = 0,
+
+    .LETTER = 0x4A0,
+    .FURNITURE = 0x578, // 10.
+    .PERSONALITY = 0x594, 
+    .VILLAGER_ID = 0x595, 
+    .SHIRT = 0x5AE, 
+    .WALLPAPER = 0x5B0, 
+    .CARPET = 0x5B1, 
+    .UMBRELLA = 0x544,
 };
 
 VillagerStruct VILLAGER_KOR = {
     .VILLAGER_START = 0x9284,
     .VILLAGER_SIZE = 0x7EC,
-    .LETTER = 0x634,
-	.FURNITURE = 0x78C, // 10.
-	.PERSONALITY = 0x7AE, 
-	.VILLAGER_ID = 0x7AF, 
-	.SHIRT = 0x7D2, 
-	.WALLPAPER = 0x7D4, 
-	.CARPET = 0x7D5, 
-	.UMBRELLA = 0x7DA,
 
-    .MEMORIES_SIZE = 0,
     .MEMORIES_START = 0,
+    .MEMORIES_SIZE = 0,
+
+    .LETTER = 0x634,
+    .FURNITURE = 0x78C, // 10.
+    .PERSONALITY = 0x7AE, 
+    .VILLAGER_ID = 0x7AF, 
+    .SHIRT = 0x7D2, 
+    .WALLPAPER = 0x7D4, 
+    .CARPET = 0x7D5, 
+    .UMBRELLA = 0x7DA,
 };
 
 
@@ -116,7 +122,9 @@ class Memory {
         int startOffset;
         VillagerMemoryStruct* regionalData;
     public:
-        Memory();
+        Memory() {
+
+        }
 
         void init(uint8_t* save, int offset, VillagerMemoryStruct* region) {
             saveData = save;
@@ -163,7 +171,7 @@ class Memory {
         time_t GetDate() {
             uint8_t day = saveData[startOffset + regionalData->DATE_DAY];
             uint8_t month = saveData[startOffset + regionalData->DATE_MONTH];
-            uint8_t year = 2000 + saveData[startOffset + regionalData->DATE_YEAR];
+            int year = 2000 + saveData[startOffset + regionalData->DATE_YEAR];
 
             struct tm  tm;
             time_t rawtime;
@@ -196,7 +204,6 @@ class Villager {
         uint8_t* saveData;
         int startOffset;
         VillagerStruct* regionalData;
-        Memory memories[MEMORIES_COUNT];
 
         void loadMemories() {
             VillagerMemoryStruct* region;
@@ -213,6 +220,8 @@ class Villager {
             }
         }
     public:
+        Memory memories[MEMORIES_COUNT];
+
         Villager(uint8_t* save, int offset, VillagerStruct* region) {
             saveData = save;
             startOffset = offset;
@@ -221,7 +230,30 @@ class Villager {
             this->loadMemories();
         }
 
+        uint8_t GetVillagerId() {
+            return (saveData[startOffset + regionalData->VILLAGER_ID]); // << 8) | (saveData[startOffset + regionalData->VILLAGER_ID + 1] & 0xFF);
+        }
+
+        void setVillagerId(uint8_t value) {
+            saveData[startOffset + regionalData->VILLAGER_ID] = value; // >> 8;
+            // saveData[startOffset + regionalData->VILLAGER_ID + 1] = value & 0xFF;
+        }
+
 
 };
+
+void printVillagerMemory(Memory &mem) {
+    time_t time = mem.GetDate();
+    struct tm* tm = localtime(&time);
+    consolef("Memory: %04x:%s %04x:%s %d/%d/%d %02x\n", mem.GetTownId(), convertToASCII(mem.GetTownName()).c_str(), mem.GetPlayerId(), convertToASCII(mem.GetPlayerName()).c_str(), tm->tm_mday, tm->tm_mon + 1, tm->tm_year - 100, mem.GetFriendship());
+}
+
+
+void printVillager(Villager &villager) {
+    consolef("Villager: %02x\n", villager.GetVillagerId());
+    for(int i = 0; i < MEMORIES_COUNT; i++) {
+        printVillagerMemory(villager.memories[i]);
+    }
+}
 
 #endif 

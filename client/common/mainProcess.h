@@ -9,6 +9,7 @@
 #include "letterFactory.h"
 #include "postman.h"
 #include "bootstrap.h"
+#include "villager.h"
 
 #define SAVE_LENGTH 0x3FFFF
 
@@ -25,6 +26,14 @@ static inline void mainProcess(int key) {
         consolef("Unable to load save file\n");
         dsExit(1);
     }
+
+    VillagerStruct* villagerRegion = &VILLAGER_EUR_USA;
+    for(int i = 0; i < VILLAGERS_COUNT; i++) {
+        Villager v(saveData, villagerRegion->VILLAGER_START + i * villagerRegion->VILLAGER_SIZE, villagerRegion);
+        printVillager(v);
+        waitForKey(KEY_START);
+    }
+
 
     std::string backup = config.save + ".bak";
     if(!writeFile(backup.c_str(), saveData, SAVE_LENGTH)) {
